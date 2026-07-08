@@ -1,0 +1,17 @@
+{
+  "name": "@ventures/alter-ego",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Alter Ego - scaffolded by AI OS Production v1.",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@aios/ui-primitives": "file:../../../ui-primitives",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "esbuild": "^0.24.0"
+  }
+}

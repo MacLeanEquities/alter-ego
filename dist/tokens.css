@@ -1,0 +1,156 @@
+/* @aios/ui-primitives design tokens + component styles.
+   Import once: import "@aios/ui-primitives/tokens.css".
+   Verticals override the brand by setting the --aios-* variables (see brand.ts). */
+
+:root {
+  /* Color */
+  --aios-color-bg: #ffffff;
+  --aios-color-surface: #f7f8fa;
+  --aios-color-fg: #14181f;
+  --aios-color-muted: #5b6472;
+  --aios-color-border: #e2e6ec;
+  --aios-color-primary: #2f6df6;
+  --aios-color-primary-fg: #ffffff;
+  --aios-color-primary-hover: #1f5be0;
+  --aios-color-accent: #7c5cff;
+  --aios-color-danger: #d92d20;
+  --aios-color-danger-fg: #ffffff;
+  --aios-color-success: #12894c;
+  --aios-color-warning: #b7791f;
+  --aios-color-focus: #2f6df6;
+
+  /* Type */
+  --aios-font-heading: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --aios-font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --aios-font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --aios-text-xs: 0.75rem;
+  --aios-text-sm: 0.875rem;
+  --aios-text-base: 1rem;
+  --aios-text-lg: 1.125rem;
+  --aios-text-xl: 1.375rem;
+  --aios-text-2xl: 1.75rem;
+  --aios-leading: 1.5;
+
+  /* Spacing */
+  --aios-space-1: 0.25rem;
+  --aios-space-2: 0.5rem;
+  --aios-space-3: 0.75rem;
+  --aios-space-4: 1rem;
+  --aios-space-5: 1.5rem;
+  --aios-space-6: 2rem;
+  --aios-space-8: 3rem;
+
+  /* Radius, shadow, motion */
+  --aios-radius-sm: 6px;
+  --aios-radius: 10px;
+  --aios-radius-lg: 16px;
+  --aios-radius-pill: 999px;
+  --aios-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --aios-shadow: 0 6px 20px rgba(16, 24, 40, 0.10);
+  --aios-shadow-lg: 0 20px 48px rgba(16, 24, 40, 0.18);
+  --aios-motion-fast: 120ms;
+  --aios-motion: 200ms;
+  --aios-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-aios-theme="light"]) {
+    --aios-color-bg: #0f1219;
+    --aios-color-surface: #161b25;
+    --aios-color-fg: #eef1f6;
+    --aios-color-muted: #98a2b3;
+    --aios-color-border: #283143;
+    --aios-color-primary-fg: #ffffff;
+  }
+}
+
+/* Base + accessibility */
+.aios { color: var(--aios-color-fg); font-family: var(--aios-font-body); font-size: var(--aios-text-base); line-height: var(--aios-leading); }
+.aios *, .aios *::before, .aios *::after { box-sizing: border-box; }
+.aios :focus-visible { outline: 2px solid var(--aios-color-focus); outline-offset: 2px; border-radius: var(--aios-radius-sm); }
+@media (prefers-reduced-motion: reduce) {
+  .aios *, .aios *::before, .aios *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+.aios-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Button */
+.aios-btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--aios-space-2); font: inherit; font-weight: 600; line-height: 1; padding: 0.625rem 1rem; border-radius: var(--aios-radius); border: 1px solid transparent; cursor: pointer; transition: background var(--aios-motion) var(--aios-ease), border-color var(--aios-motion) var(--aios-ease), opacity var(--aios-motion) var(--aios-ease); }
+.aios-btn:disabled, .aios-btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+.aios-btn--primary { background: var(--aios-color-primary); color: var(--aios-color-primary-fg); }
+.aios-btn--primary:hover:not(:disabled) { background: var(--aios-color-primary-hover); }
+.aios-btn--secondary { background: var(--aios-color-surface); color: var(--aios-color-fg); border-color: var(--aios-color-border); }
+.aios-btn--ghost { background: transparent; color: var(--aios-color-primary); }
+.aios-btn--danger { background: var(--aios-color-danger); color: var(--aios-color-danger-fg); }
+.aios-btn--sm { padding: 0.4rem 0.7rem; font-size: var(--aios-text-sm); }
+.aios-btn--lg { padding: 0.8rem 1.3rem; font-size: var(--aios-text-lg); }
+.aios-btn--block { width: 100%; }
+
+/* Inputs */
+.aios-field { display: flex; flex-direction: column; gap: var(--aios-space-2); }
+.aios-label { font-size: var(--aios-text-sm); font-weight: 600; color: var(--aios-color-fg); }
+.aios-input, .aios-textarea, .aios-select { font: inherit; width: 100%; padding: 0.6rem 0.75rem; color: var(--aios-color-fg); background: var(--aios-color-bg); border: 1px solid var(--aios-color-border); border-radius: var(--aios-radius); transition: border-color var(--aios-motion) var(--aios-ease); }
+.aios-input:focus, .aios-textarea:focus, .aios-select:focus { outline: none; border-color: var(--aios-color-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--aios-color-primary) 22%, transparent); }
+.aios-input[aria-invalid="true"], .aios-textarea[aria-invalid="true"] { border-color: var(--aios-color-danger); }
+.aios-textarea { min-height: 6rem; resize: vertical; }
+.aios-help { font-size: var(--aios-text-xs); color: var(--aios-color-muted); }
+.aios-error { font-size: var(--aios-text-xs); color: var(--aios-color-danger); }
+
+/* Checkbox, radio, toggle */
+.aios-check { display: inline-flex; align-items: center; gap: var(--aios-space-2); font-size: var(--aios-text-sm); cursor: pointer; }
+.aios-check input { width: 1.05rem; height: 1.05rem; accent-color: var(--aios-color-primary); }
+.aios-toggle { position: relative; display: inline-flex; align-items: center; gap: var(--aios-space-2); cursor: pointer; }
+.aios-toggle__track { width: 2.4rem; height: 1.35rem; border-radius: var(--aios-radius-pill); background: var(--aios-color-border); transition: background var(--aios-motion) var(--aios-ease); position: relative; }
+.aios-toggle__track[data-on="true"] { background: var(--aios-color-primary); }
+.aios-toggle__thumb { position: absolute; top: 2px; left: 2px; width: 1.05rem; height: 1.05rem; border-radius: 50%; background: #fff; box-shadow: var(--aios-shadow-sm); transition: transform var(--aios-motion) var(--aios-ease); }
+.aios-toggle__track[data-on="true"] .aios-toggle__thumb { transform: translateX(1.05rem); }
+
+/* Card + surfaces */
+.aios-card { background: var(--aios-color-bg); border: 1px solid var(--aios-color-border); border-radius: var(--aios-radius-lg); box-shadow: var(--aios-shadow-sm); padding: var(--aios-space-5); }
+.aios-divider { height: 1px; background: var(--aios-color-border); border: 0; margin: var(--aios-space-4) 0; }
+
+/* Overlay: modal + drawer */
+.aios-overlay { position: fixed; inset: 0; background: rgba(16, 24, 40, 0.45); display: flex; align-items: center; justify-content: center; padding: var(--aios-space-4); z-index: 1000; }
+.aios-modal { background: var(--aios-color-bg); border-radius: var(--aios-radius-lg); box-shadow: var(--aios-shadow-lg); max-width: 32rem; width: 100%; padding: var(--aios-space-5); }
+.aios-drawer { position: fixed; top: 0; right: 0; height: 100%; width: min(28rem, 92vw); background: var(--aios-color-bg); box-shadow: var(--aios-shadow-lg); padding: var(--aios-space-5); z-index: 1000; }
+
+/* Toast + tooltip */
+.aios-toast { display: flex; gap: var(--aios-space-3); align-items: flex-start; background: var(--aios-color-fg); color: var(--aios-color-bg); padding: 0.75rem 1rem; border-radius: var(--aios-radius); box-shadow: var(--aios-shadow); }
+.aios-tooltip { position: relative; display: inline-flex; }
+.aios-tooltip__bubble { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--aios-color-fg); color: var(--aios-color-bg); font-size: var(--aios-text-xs); padding: 0.3rem 0.5rem; border-radius: var(--aios-radius-sm); white-space: nowrap; }
+
+/* Tabs + accordion */
+.aios-tabs__list { display: flex; gap: var(--aios-space-1); border-bottom: 1px solid var(--aios-color-border); }
+.aios-tab { font: inherit; background: none; border: 0; padding: 0.6rem 0.9rem; cursor: pointer; color: var(--aios-color-muted); border-bottom: 2px solid transparent; }
+.aios-tab[aria-selected="true"] { color: var(--aios-color-fg); border-bottom-color: var(--aios-color-primary); }
+.aios-accordion__item { border-bottom: 1px solid var(--aios-color-border); }
+.aios-accordion__trigger { font: inherit; width: 100%; text-align: left; background: none; border: 0; padding: 0.85rem 0; cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; }
+.aios-accordion__panel { padding-bottom: var(--aios-space-4); color: var(--aios-color-muted); }
+
+/* Table + pagination */
+.aios-table { width: 100%; border-collapse: collapse; font-size: var(--aios-text-sm); }
+.aios-table th, .aios-table td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--aios-color-border); }
+.aios-table th { color: var(--aios-color-muted); font-weight: 600; }
+.aios-pagination { display: flex; gap: var(--aios-space-2); align-items: center; }
+
+/* States */
+.aios-state { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--aios-space-3); padding: var(--aios-space-6); color: var(--aios-color-muted); }
+.aios-state__title { color: var(--aios-color-fg); font-weight: 600; font-size: var(--aios-text-lg); }
+.aios-spinner { width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 2px solid var(--aios-color-border); border-top-color: var(--aios-color-primary); animation: aios-spin 0.8s linear infinite; }
+@keyframes aios-spin { to { transform: rotate(360deg); } }
+.aios-state--error .aios-state__title { color: var(--aios-color-danger); }
+.aios-state--success .aios-state__title { color: var(--aios-color-success); }
+
+/* Checkout */
+.aios-plans { display: grid; gap: var(--aios-space-4); grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.aios-plan { border: 1px solid var(--aios-color-border); border-radius: var(--aios-radius-lg); padding: var(--aios-space-5); cursor: pointer; transition: border-color var(--aios-motion) var(--aios-ease); }
+.aios-plan[data-selected="true"] { border-color: var(--aios-color-primary); box-shadow: 0 0 0 2px var(--aios-color-primary); }
+.aios-plan__price { font-size: var(--aios-text-2xl); font-weight: 700; }
+.aios-summary { display: flex; flex-direction: column; gap: var(--aios-space-2); }
+.aios-summary__row { display: flex; justify-content: space-between; }
+.aios-summary__total { font-weight: 700; border-top: 1px solid var(--aios-color-border); padding-top: var(--aios-space-2); }
+
+/* Layout */
+.aios-stack { display: flex; flex-direction: column; }
+.aios-row { display: flex; flex-direction: row; }
+.aios-grid { display: grid; }
+.aios-container { width: 100%; margin-inline: auto; padding-inline: var(--aios-space-4); }

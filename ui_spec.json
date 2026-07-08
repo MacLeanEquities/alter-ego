@@ -1,0 +1,78 @@
+{
+  "contract": "ui_spec",
+  "schema_version": "1.0.0",
+  "ui_spec_id": "ce7e345b-fe54-4e54-924e-8a1812250da3",
+  "blueprint_id": "b6e87f1b-6e1b-4bfa-979c-2e1a801d85ef",
+  "slug": "alter-ego",
+  "is_test": false,
+  "created_at": "2026-07-08T01:57:00.633Z",
+  "theme": {
+    "kit": "ui-primitives",
+    "mode": "system"
+  },
+  "pages": [
+    {
+      "id": "home",
+      "route": "/",
+      "title": "Alter Ego",
+      "purpose": "Landing page: what this is and who it is for.",
+      "components": [
+        {
+          "type": "hero",
+          "props": {
+            "headline": "Alter Ego",
+            "subhead": "FREE, forever. Paste nothing — just answer ~8 quick, revealing questions. In"
+          }
+        },
+        {
+          "type": "article-list",
+          "content_source": "content-engine:alter-ego-main-v1"
+        }
+      ]
+    },
+    {
+      "id": "content",
+      "route": "/content",
+      "title": "The Content",
+      "purpose": "The venture's content piece, rendered in full.",
+      "components": [
+        {
+          "type": "article",
+          "content_source": "content-engine:alter-ego-main-v1"
+        }
+      ]
+    },
+    {
+      "id": "about",
+      "route": "/about",
+      "title": "About",
+      "purpose": "Plain statement of what this venture is.",
+      "components": [
+        {
+          "type": "prose",
+          "props": {
+            "text": "People do not share utilities — they share identity. Spotify Wrapped, MBTI, and\nevery viral \"which one are you\" test work because they hand someone a mirror and\na label they are proud to post. Alter Ego is that mechanic built as an AI product:\nanswer a handful of honest questions and get back a named \"alter ego\" — an\nevocative archetype, a sharp-but-warm reading of who you are, your strengths and\nyour shadow, and a one-line metaphor — rendered as a beautiful, screenshot-ready\ncard. It costs ~nothing to run (local model + templated card), spreads itself\n(\"what's your Alter Ego?\"), and every share is an ad we never paid for. For the\nAI OS this is an audience engine and a factory proof: it builds the reusable\n\"questionnaire -> AI identity -> shareable card -> captured email\" machine that\nthe business-vitals vertical then reuses."
+          }
+        }
+      ]
+    }
+  ],
+  "navigation": [
+    {
+      "label": "Home",
+      "route": "/"
+    },
+    {
+      "label": "Content",
+      "route": "/content"
+    },
+    {
+      "label": "About",
+      "route": "/about"
+    }
+  ],
+  "acceptance": [
+    "every page in this spec renders without errors",
+    "navigation reaches every page"
+  ]
+}
