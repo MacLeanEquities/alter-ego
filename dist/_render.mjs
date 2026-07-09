@@ -93,7 +93,46 @@ function renderPage(page, ctx) {
     )
   );
 }
+function renderCard(reading, variant = 0) {
+  const backgrounds = [
+    "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNmZmYiLz48L3N2Zz4=')",
+    "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMwMDQwODAiLz48L3N2Zz4=')",
+    "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiMwMDAwMDAiLz48L3N2Zz4=')"
+  ];
+  const bg = backgrounds[variant % backgrounds.length];
+  return `
+    <div style="
+      background: ${bg};
+      background-size: cover;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+      box-sizing: border-box;
+    ">
+      <h2 style="margin: 0; font-size: 1.2em;">${reading.archetype_name}</h2>
+      <p style="margin: 5px 0; font-size: 0.9em;">${reading.one_line_essence}</p>
+      <p style="margin: 5px 0; font-size: 0.8em;">${reading.visual_metaphor}</p>
+      <div style="margin-top: 10px; font-size: 0.8em;">
+        <strong>Strengths:</strong> ${reading.strengths.join(", ")}
+      </div>
+      <div style="margin-top: 5px; font-size: 0.8em;">
+        <strong>Shadow:</strong> ${reading.shadow_traits.join(", ")}
+      </div>
+      <div style="margin-top: 10px; font-size: 0.8em; border-top: 1px solid rgba(255,255,255,0.5); padding-top: 5px;">
+        ${reading.motto_chapter_themeword}
+      </div>
+    </div>
+  `;
+}
 export {
+  renderCard,
   renderComponent,
   renderPage
 };
