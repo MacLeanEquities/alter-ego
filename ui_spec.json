@@ -1,11 +1,11 @@
 {
   "contract": "ui_spec",
   "schema_version": "1.0.0",
-  "ui_spec_id": "f82eabd8-8b38-4662-9665-92b0d156b39e",
-  "blueprint_id": "a6904014-fb19-42e7-9a32-c26d726c35a3",
+  "ui_spec_id": "28027b80-253c-46ee-ac34-7b6c14d36159",
+  "blueprint_id": "7c423979-eca8-4bcd-a236-d26702e282fc",
   "slug": "alter-ego",
   "is_test": false,
-  "created_at": "2026-07-09T21:28:58.728Z",
+  "created_at": "2026-07-10T00:59:03.315Z",
   "theme": {
     "kit": "ui-primitives",
     "mode": "system"
