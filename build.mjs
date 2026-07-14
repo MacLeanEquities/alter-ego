@@ -35,10 +35,22 @@ const require = createRequire(import.meta.url);
 const tokensCss = readFileSync(require.resolve("@aios/ui-primitives/tokens.css"), "utf8");
 writeFileSync(new URL("./dist/tokens.css", import.meta.url), tokensCss, "utf8");
 
-// APP lane: copy the primary-interaction client into dist and mount it on every
+// APP lane: get the primary-interaction client into dist and mount it on every
 // page. A static site leaves APP false and renders exactly as before.
 const APP = true;
-if (APP) {
+const APP_FLOW = true;
+if (APP_FLOW) {
+  // The app-flow client imports the synthesized brain (./capability.mjs [+ ./card.mjs]);
+  // bundle it (IIFE) so the classic <script> tag works and the engine SHIPS in dist.
+  await esbuild.build({
+    entryPoints: [fileURLToPath(new URL("./client.js", import.meta.url))],
+    bundle: true,
+    platform: "browser",
+    format: "iife",
+    outfile: fileURLToPath(new URL("./dist/client.js", import.meta.url)),
+    logLevel: "warning",
+  });
+} else if (APP) {
   writeFileSync(new URL("./dist/client.js", import.meta.url),
     readFileSync(new URL("./client.js", import.meta.url), "utf8"), "utf8");
 }

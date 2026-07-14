@@ -1,11 +1,11 @@
 {
   "contract": "ui_spec",
   "schema_version": "1.0.0",
-  "ui_spec_id": "28027b80-253c-46ee-ac34-7b6c14d36159",
-  "blueprint_id": "7c423979-eca8-4bcd-a236-d26702e282fc",
+  "ui_spec_id": "8a6606e7-1e61-4989-bea8-225f25551240",
+  "blueprint_id": "92859ca4-882a-45c7-92fe-4fcdd757912a",
   "slug": "alter-ego",
   "is_test": false,
-  "created_at": "2026-07-10T00:59:03.315Z",
+  "created_at": "2026-07-14T00:59:10.410Z",
   "theme": {
     "kit": "ui-primitives",
     "mode": "system"
@@ -15,30 +15,36 @@
       "id": "home",
       "route": "/",
       "title": "Alter Ego",
-      "purpose": "Landing page: what this is and who it is for.",
+      "purpose": "The interactive product: take the questionnaire and get your result.",
       "components": [
         {
-          "type": "hero",
+          "type": "app-flow",
           "props": {
-            "headline": "Alter Ego",
-            "subhead": "FREE, forever. Paste nothing — just answer ~8 quick, revealing questions. In"
+            "shape": "answers-result",
+            "intro": "FREE, forever. Paste nothing — just answer ~8 quick, revealing questions. In",
+            "question_count": 8,
+            "ask_name": true,
+            "has_card": true,
+            "capture": {
+              "enabled": true,
+              "fields": [
+                "email",
+                "first_name"
+              ],
+              "unlocks": "the full result"
+            },
+            "result_fields": [
+              "archetype_name",
+              "one_line_essence",
+              "visual_metaphor",
+              "strengths",
+              "shadow_traits",
+              "motto / chapter theme-word",
+              "narrative"
+            ],
+            "pattern": "Ask -> Generate -> Reveal -> Capture -> Share",
+            "product_name": "Alter Ego"
           }
-        },
-        {
-          "type": "article-list",
-          "content_source": "content-engine:alter-ego-main-v1"
-        }
-      ]
-    },
-    {
-      "id": "content",
-      "route": "/content",
-      "title": "The Content",
-      "purpose": "The venture's content piece, rendered in full.",
-      "components": [
-        {
-          "type": "article",
-          "content_source": "content-engine:alter-ego-main-v1"
         }
       ]
     },
@@ -59,12 +65,8 @@
   ],
   "navigation": [
     {
-      "label": "Home",
+      "label": "Alter Ego",
       "route": "/"
-    },
-    {
-      "label": "Content",
-      "route": "/content"
     },
     {
       "label": "About",
@@ -72,7 +74,10 @@
     }
   ],
   "acceptance": [
-    "every page in this spec renders without errors",
-    "navigation reaches every page"
+    "the questionnaire renders and can be submitted",
+    "submitting returns a complete result with no empty fields",
+    "the result is a templated CSS/HTML card, not a per-user generated image",
+    "email capture records the contact before the full result is shown",
+    "the app degrades cleanly on mobile and with reduced motion"
   ]
 }

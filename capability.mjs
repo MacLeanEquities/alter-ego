@@ -1,112 +1,247 @@
-const archetypes = [
-  {
-    archetype_name: "The Quiet Weaver",
-    one_line_essence: "You're the one who weaves connections from the quietest threads, ${name}.",
-    visual_metaphor: "A tapestry of moonlight and starlight, each thread a shared moment",
-    strengths: ["Active listening", "Patience", "Intuitive empathy"],
-    shadow_traits: ["Overlooks their own needs", "Avoids conflict"],
-    motto_chapter_themeword: "Threads",
-    narrative: "You find magic in the spaces between words. Your presence turns ordinary moments into intimate conversations, and you have a rare gift for making others feel truly seen. In your quiet strength, you build bridges where others see walls."
-  },
-  {
-    archetype_name: "The Bold Catalyst",
-    one_line_essence: "You're the one who ignites change with a single spark, ${name}.",
-    visual_metaphor: "A single match striking in a dark room, lighting a path for others",
-    strengths: ["Courage", "Vision", "Decisiveness"],
-    shadow_traits: ["Impatience", "Overlooks details"],
-    motto_chapter_themeword: "Spark",
-    narrative: "You are the spark that lights the way when others hesitate. Your boldness turns 'what if' into 'let's do it now'. You inspire action, but remember to pause and let the fire breathe."
-  },
-  {
-    archetype_name: "The Thoughtful Architect",
-    one_line_essence: "You're the one who designs spaces where ideas take root, ${name}.",
-    visual_metaphor: "A blueprint of interconnected pathways, glowing softly in the dark",
-    strengths: ["Strategic thinking", "Clarity", "Patience"],
-    shadow_traits: ["Over-engineers", "Hesitates to act"],
-    motto_chapter_themeword: "Blueprint",
-    narrative: "You see the hidden structure in chaos and build frameworks that make the complex feel simple. Your designs are not just functional, but deeply human. Remember to trust your instincts when the blueprint feels too rigid."
-  },
-  {
-    archetype_name: "The Compassionate Guide",
-    one_line_essence: "You're the one who lights the way with kindness, ${name}.",
-    visual_metaphor: "A lantern carried through a misty forest, casting a warm circle of light",
-    strengths: ["Empathy", "Supportiveness", "Resilience"],
-    shadow_traits: ["Takes on too much", "Struggles to say no"],
-    motto_chapter_themeword: "Lantern",
-    narrative: "You are the steady hand that helps others navigate uncertainty. Your kindness is not passive, but a powerful force that creates safety. In your care, others find the courage to move forward."
-  },
-  {
-    archetype_name: "The Curious Explorer",
-    one_line_essence: "You're the one who finds wonder in the uncharted, ${name}.",
-    visual_metaphor: "A compass pointing toward a horizon of unknown stars",
-    strengths: ["Curiosity", "Adaptability", "Open-mindedness"],
-    shadow_traits: ["Distracted by new ideas", "Overlooks the obvious"],
-    motto_chapter_themeword: "Horizon",
-    narrative: "You are driven by the thrill of discovery, always seeking the next horizon. Your curiosity opens doors to new perspectives, but remember to ground yourself in the present to fully appreciate the journey."
-  },
-  {
-    archetype_name: "The Steadfast Guardian",
-    one_line_essence: "You're the one who stands firm when the world trembles, ${name}.",
-    visual_metaphor: "A lighthouse weathering a storm, its beam cutting through the dark",
-    strengths: ["Loyalty", "Steadfastness", "Protection"],
-    shadow_traits: ["Rigid", "Fears vulnerability"],
-    motto_chapter_themeword: "Lighthouse",
-    narrative: "You are the unwavering anchor in times of chaos. Your strength lies in your ability to protect and provide stability. But remember, even lighthouses need to rest and let the storm pass."
-  },
-  {
-    archetype_name: "The Creative Alchemist",
-    one_line_essence: "You're the one who turns ordinary moments into gold, ${name}.",
-    visual_metaphor: "A pot of bubbling liquid, transforming base metals into shimmering gold",
-    strengths: ["Creativity", "Resourcefulness", "Transformation"],
-    shadow_traits: ["Overlooks practicality", "Seeks constant change"],
-    motto_chapter_themeword: "Alchemy",
-    narrative: "You see potential where others see limitations. Your creativity turns the mundane into the magical. But remember, even gold needs a solid foundation to shine."
-  },
-  {
-    archetype_name: "The Harmonious Mediator",
-    one_line_essence: "You're the one who finds the melody in the chaos, ${name}.",
-    visual_metaphor: "A conductor's baton weaving together a symphony of diverse instruments",
-    strengths: ["Conflict resolution", "Listening", "Balance"],
-    shadow_traits: ["Avoids necessary confrontation", "Seeks harmony at all costs"],
-    motto_chapter_themeword: "Symphony",
-    narrative: "You are the bridge between opposing forces, finding harmony in the midst of discord. Your gift is making the whole greater than the sum of its parts. But remember, true harmony sometimes requires a little dissonance to grow."
-  },
-  {
-    archetype_name: "The Resilient Pioneer",
-    one_line_essence: "You're the one who plants seeds in uncharted soil, ${name}.",
-    visual_metaphor: "A single sapling growing through cracked concrete, reaching for the sky",
-    strengths: ["Resilience", "Courage", "Innovation"],
-    shadow_traits: ["Overlooks support", "Burns out quickly"],
-    motto_chapter_themeword: "Sapling",
-    narrative: "You are the first to step into the unknown, planting the seeds of what's next. Your resilience turns obstacles into stepping stones. But remember to nurture yourself as you nurture the future."
-  },
-  {
-    archetype_name: "The Insightful Observer",
-    one_line_essence: "You're the one who sees the hidden patterns, ${name}.",
-    visual_metaphor: "A magnifying glass revealing intricate details in a leaf's vein",
-    strengths: ["Perception", "Analysis", "Patience"],
-    shadow_traits: ["Overthinks", "Withholds judgment"],
-    motto_chapter_themeword: "Vein",
-    narrative: "You see the world in layers, uncovering the hidden stories beneath the surface. Your insights guide others to see more deeply. But remember, sometimes the most important patterns are found in the spaces between the lines."
-  }
-];
-
 export function runCapability(input) {
-  const s = input.answers.join("|||");
-  let h = 0;
-  for (let i = 0; i < s.length; i++) {
-    h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  }
-  const index = h % 10;
-  const archetype = archetypes[index];
-  const oneLine = archetype.one_line_essence.replace(/\${name}/g, input.firstName || "friend");
-  return {
-    archetype_name: archetype.archetype_name,
-    one_line_essence: oneLine,
-    visual_metaphor: archetype.visual_metaphor,
-    strengths: archetype.strengths,
-    shadow_traits: archetype.shadow_traits,
-    motto_chapter_themeword: archetype.motto_chapter_themeword,
-    narrative: archetype.narrative
-  };
+  const archetypes = [
+    {
+      archetype_name: "The Curious Cartographer",
+      one_line_essence: "You're the one who maps the uncharted with a steady hand.",
+      visual_metaphor: "A compass made of starlight",
+      strengths: [
+        "Maps the unknown",
+        "Listens deeply",
+        "Connects hidden dots"
+      ],
+      shadow_traits: [
+        "Can get lost in the details",
+        "Hesitates to share maps"
+      ],
+      motto_chapter_themeword: "Charting the Unseen",
+      narrative: "You see the world as a series of interconnected paths. Your strength lies in turning the invisible into a clear route. Sometimes, you might get so focused on the map that you forget to share the journey with others."
+    },
+    {
+      archetype_name: "The Quiet Catalyst",
+      one_line_essence: "You're the one who sparks change without a sound.",
+      visual_metaphor: "A single drop of water creating ripples",
+      strengths: [
+        "Observes deeply",
+        "Acts with precision",
+        "Creates calm in chaos"
+      ],
+      shadow_traits: [
+        "Waits too long to act",
+        "Fears being overlooked"
+      ],
+      motto_chapter_themeword: "Ripples of Change",
+      narrative: "You notice the subtle shifts in the air and act with quiet confidence. Your ability to see the small changes that lead to big shifts is your superpower. Sometimes, you might hold back too long, waiting for the perfect moment that never comes."
+    },
+    {
+      archetype_name: "The Patient Weaver",
+      one_line_essence: "You're the one who weaves connections across time and space.",
+      visual_metaphor: "A tapestry of interwoven threads",
+      strengths: [
+        "Builds lasting relationships",
+        "Sees the big picture",
+        "Patience in the face of chaos"
+      ],
+      shadow_traits: [
+        "Takes too long to make decisions",
+        "Overlooks the immediate"
+      ],
+      motto_chapter_themeword: "Threads of Time",
+      narrative: "You create strong bonds by weaving together the threads of people's stories. Your patience allows you to see the connections others miss. However, you might get stuck in the weaving process and forget to move forward."
+    },
+    {
+      archetype_name: "The Bold Archivist",
+      one_line_essence: "You're the one who preserves the past to shape the future.",
+      visual_metaphor: "A library of living memories",
+      strengths: [
+        "Preserves history",
+        "Draws wisdom from the past",
+        "Organizes with clarity"
+      ],
+      shadow_traits: [
+        "Clings to the past",
+        "Resists new ideas"
+      ],
+      motto_chapter_themeword: "History in Motion",
+      narrative: "You believe that the past holds the key to the future. Your strength is in preserving and organizing the stories that matter. But sometimes, you might hold onto old ways too tightly, missing the new opportunities that are unfolding."
+    },
+    {
+      archetype_name: "The Gentle Guide",
+      one_line_essence: "You're the one who leads with a soft touch and steady presence.",
+      visual_metaphor: "A lantern in the fog",
+      strengths: [
+        "Offers calm reassurance",
+        "Sees the path clearly",
+        "Supports without pushing"
+      ],
+      shadow_traits: [
+        "Avoids conflict",
+        "Fears being too direct"
+      ],
+      motto_chapter_themeword: "Guiding Light",
+      narrative: "You are the calm in the storm, offering a steady light to those who feel lost. Your gentle guidance helps others find their way. However, you might avoid difficult conversations, hoping to keep the peace."
+    },
+    {
+      archetype_name: "The Resilient Builder",
+      one_line_essence: "You're the one who constructs with unwavering strength.",
+      visual_metaphor: "A tree growing through stone",
+      strengths: [
+        "Builds enduring structures",
+        "Adapts to challenges",
+        "Works tirelessly"
+      ],
+      shadow_traits: [
+        "Takes on too much",
+        "Fears failure"
+      ],
+      motto_chapter_themeword: "Rooted and Rising",
+      narrative: "You build things that last, even when the ground is hard. Your resilience is your greatest asset. But you might take on too many projects at once, spreading yourself too thin."
+    },
+    {
+      archetype_name: "The Reflective Listener",
+      one_line_essence: "You're the one who hears the unspoken and reflects it back.",
+      visual_metaphor: "A mirror reflecting the soul",
+      strengths: [
+        "Hears deeply",
+        "Reflects with empathy",
+        "Creates safe space"
+      ],
+      shadow_traits: [
+        "Overthinks",
+        "Struggles to speak up"
+      ],
+      motto_chapter_themeword: "Echoes of Understanding",
+      narrative: "You have a gift for hearing what others don't say. Your reflections help others see themselves more clearly. But you might get caught in your own thoughts, making it hard to share your own perspective."
+    },
+    {
+      archetype_name: "The Creative Bridge",
+      one_line_essence: "You're the one who connects disparate ideas into something new.",
+      visual_metaphor: "A bridge of light between two worlds",
+      strengths: [
+        "Sees unexpected connections",
+        "Fosters collaboration",
+        "Innovates with ease"
+      ],
+      shadow_traits: [
+        "Overlooks details",
+        "Chases the next idea"
+      ],
+      motto_chapter_themeword: "Bridging the Gap",
+      narrative: "You are the spark that brings together different worlds. Your creativity turns chaos into harmony. However, you might jump from idea to idea without finishing the current project."
+    },
+    {
+      archetype_name: "The Steady Navigator",
+      one_line_essence: "You're the one who keeps the course when the winds shift.",
+      visual_metaphor: "A ship sailing through stormy seas",
+      strengths: [
+        "Maintains direction",
+        "Adapts to change",
+        "Provides stability"
+      ],
+      shadow_traits: [
+        "Resists change",
+        "Fears the unknown"
+      ],
+      motto_chapter_themeword: "Sailing True",
+      narrative: "You are the anchor in the storm, keeping everyone on course. Your steady presence is a comfort. But you might resist necessary changes, preferring the known path."
+    },
+    {
+      archetype_name: "The Thoughtful Connector",
+      one_line_essence: "You're the one who brings people together with intention.",
+      visual_metaphor: "A web of glowing threads",
+      strengths: [
+        "Builds meaningful connections",
+        "Sees the potential in others",
+        "Fosters community"
+      ],
+      shadow_traits: [
+        "Takes on too many connections",
+        "Neglects self-care"
+      ],
+      motto_chapter_themeword: "Threads of Community",
+      narrative: "You see the threads that bind people together and weave them into a strong community. Your thoughtfulness creates deep bonds. But you might forget to take care of yourself in the process."
+    }
+  ];
+  
+  const totalLength = input.answers.reduce((sum, answer) => sum + answer.length, 0);
+  const index = totalLength % archetypes.length;
+  return archetypes[index];
+}
+
+export function renderCard(reading, variant = 0) {
+  return `
+    .card {
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff9a9e, #fad0c4, #a1c4fd);
+    }
+    .archetype {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .essence {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-style: italic;
+    }
+    .metaphor {
+      font-style: italic;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      opacity: 0.9;
+    }
+    .strengths, .shadows {
+      margin: 1rem 0;
+    }
+    .strengths h3, .shadows h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .strengths ul, .shadows ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    .strengths li, .shadows li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      text-align: center;
+    }
+    .motto {
+      font-weight: bold;
+      font-size: 1.3rem;
+      text-align: center;
+      margin: 1.5rem 0;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+    .narrative {
+      line-height: 1.6;
+      font-size: 1.1rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+  `;
 }
