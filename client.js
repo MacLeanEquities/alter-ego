@@ -5,14 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What's the first word that comes to mind when you think of your best self?",
-    "How do you typically handle a disagreement?",
-    "What's a trait people often notice in you?",
-    "When did you feel most authentically you?",
-    "What's an unexpected part of your personality?",
-    "How do you recharge after a long day?",
-    "What quality do you want the world to see in you?",
-    "What word describes your ideal day?"
+    "What's the first word people use to describe you?",
+    "What's a quality you're most proud to be known for?",
+    "Where do you feel completely in your element?",
+    "How do you handle conflict?",
+    "What passion makes you lose track of time?"
   ],
   "askName": true,
   "hasCard": true,
@@ -30,7 +27,7 @@ const CONFIG = {
     "narrative"
   ],
   "productName": "Alter Ego",
-  "intro": "FREE, forever. Paste nothing — just answer ~8 quick, revealing questions. In"
+  "intro": "FREE, forever. Paste nothing — just answer 5 quick, revealing questions. In"
 };
 const RENDER_CARD = renderCard;
 

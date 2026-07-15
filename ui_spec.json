@@ -1,11 +1,11 @@
 {
   "contract": "ui_spec",
   "schema_version": "1.0.0",
-  "ui_spec_id": "562bc20c-1ef6-426e-b319-57d96ef9ffd7",
-  "blueprint_id": "9ef01797-4e47-4a44-8a19-a88eac1e6487",
+  "ui_spec_id": "b1303c3c-28ed-45fe-9c55-ce87cea90fbf",
+  "blueprint_id": "70ad588f-cb9c-4f6e-91ac-6ba88c3b6023",
   "slug": "alter-ego",
   "is_test": false,
-  "created_at": "2026-07-15T00:53:29.469Z",
+  "created_at": "2026-07-15T13:25:12.673Z",
   "theme": {
     "kit": "ui-primitives",
     "mode": "system"
@@ -21,8 +21,8 @@
           "type": "app-flow",
           "props": {
             "shape": "answers-result",
-            "intro": "FREE, forever. Paste nothing — just answer ~8 quick, revealing questions. In",
-            "question_count": 8,
+            "intro": "FREE, forever. Paste nothing — just answer 5 quick, revealing questions. In",
+            "question_count": 5,
             "ask_name": true,
             "has_card": true,
             "capture": {
