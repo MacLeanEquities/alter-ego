@@ -5,14 +5,14 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What's a word that describes your energy when you're at your best?",
-    "What's a book or song that feels like it was made for you?",
-    "What's a strength you've always had but never got to use?",
-    "What's a small moment that makes you feel completely at ease?",
-    "What's a value you'd never compromise on?",
-    "What's a word that captures how you want to be remembered?",
-    "What's a place where you feel most like yourself?",
-    "What's a phrase you'd use to describe your ideal day?"
+    "What's the first word that comes to mind when you think of your best self?",
+    "How do you typically handle a disagreement?",
+    "What's a trait people often notice in you?",
+    "When did you feel most authentically you?",
+    "What's an unexpected part of your personality?",
+    "How do you recharge after a long day?",
+    "What quality do you want the world to see in you?",
+    "What word describes your ideal day?"
   ],
   "askName": true,
   "hasCard": true,
@@ -88,6 +88,82 @@ function renderQuestions() {
   r.appendChild(form);
 }
 
+// ---- deterministic templated card (the factory's guaranteed, $0 share-worthy
+// card, built from the reading DATA). Used whenever the synthesized renderCard is
+// absent or returns something invalid (e.g. bare CSS with no markup). Horizontal:
+// it reads CONFIG.resultFields + the reading object, carries no venture strings.
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+  });
+}
+var TC_GRADS = [
+  "linear-gradient(135deg,#6a11cb,#2575fc)", "linear-gradient(135deg,#8e2de2,#4a00e0)",
+  "linear-gradient(135deg,#0f2027,#2c5364)", "linear-gradient(135deg,#11998e,#38ef7d)",
+  "linear-gradient(135deg,#c31432,#240b36)", "linear-gradient(135deg,#f7971e,#c1440e)",
+  "linear-gradient(135deg,#1a2980,#26d0ce)", "linear-gradient(135deg,#ee0979,#ff6a00)"
+];
+function tcGrad(seed) {
+  var s = 0, str = String(seed || "");
+  for (var i = 0; i < str.length; i++) s = (s + str.charCodeAt(i)) % 9973;
+  return TC_GRADS[s % TC_GRADS.length];
+}
+var TEMPLATED_CARD_CSS =
+  ".aios-tc{position:relative;max-width:34rem;margin:0 auto;padding:2rem 1.75rem;border-radius:18px;color:#fff;" +
+  "font-family:inherit;box-shadow:0 18px 44px -14px rgba(0,0,0,.5);overflow:hidden}" +
+  ".aios-tc::before{content:'';position:absolute;inset:0;background:radial-gradient(130% 80% at 100% 0,rgba(255,255,255,.20),transparent 60%);pointer-events:none}" +
+  ".aios-tc>*{position:relative}" +
+  ".aios-tc-kicker{text-transform:uppercase;letter-spacing:.18em;font-size:.7rem;opacity:.82;margin:0 0 .55rem}" +
+  ".aios-tc-headline{font-size:2rem;line-height:1.1;font-weight:800;margin:0 0 .4rem;text-shadow:0 2px 14px rgba(0,0,0,.28)}" +
+  ".aios-tc-sub{font-size:1.1rem;font-style:italic;opacity:.95;margin:0 0 1.3rem;line-height:1.4}" +
+  ".aios-tc-sec{margin:0 0 1rem}" +
+  ".aios-tc-label{text-transform:uppercase;letter-spacing:.12em;font-size:.64rem;opacity:.72;margin:0 0 .3rem}" +
+  ".aios-tc-val{font-size:1rem;line-height:1.5;margin:0;white-space:pre-wrap}" +
+  ".aios-tc-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.15rem 0 0;padding:0;list-style:none}" +
+  ".aios-tc-chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.30);border-radius:999px;padding:.28rem .72rem;font-size:.85rem}" +
+  ".aios-tc-foot{margin:1.4rem 0 0;padding-top:1rem;border-top:1px solid rgba(255,255,255,.22);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;opacity:.78}";
+function tcSection(label, value) {
+  if (value == null || value === "") return "";
+  if (Array.isArray(value)) {
+    var items = value.filter(function (v) { return v != null && v !== ""; });
+    if (!items.length) return "";
+    var chips = items.map(function (v) { return '<li class="aios-tc-chip">' + esc(String(v)) + "</li>"; }).join("");
+    return '<div class="aios-tc-sec"><p class="aios-tc-label">' + esc(label) + '</p><ul class="aios-tc-chips">' + chips + "</ul></div>";
+  }
+  return '<div class="aios-tc-sec"><p class="aios-tc-label">' + esc(label) + '</p><p class="aios-tc-val">' + esc(String(value)) + "</p></div>";
+}
+function renderTemplatedCard(reading) {
+  reading = reading || {};
+  var fields = (CONFIG.resultFields && CONFIG.resultFields.length) ? CONFIG.resultFields.slice() : Object.keys(reading);
+  fields = fields.filter(function (f) {
+    var v = reading[f]; return v != null && v !== "" && !(Array.isArray(v) && !v.length);
+  });
+  var headField = fields[0];
+  var headline = headField ? reading[headField] : (CONFIG.productName || "Your result");
+  if (Array.isArray(headline)) headline = headline.join(", ");
+  var rest = fields.slice(1);
+  var subField = null;
+  for (var i = 0; i < rest.length; i++) {
+    var v = reading[rest[i]];
+    if (typeof v === "string" && v.length > 0 && v.length <= 140) { subField = rest[i]; break; }
+  }
+  var secHtml = "";
+  for (var j = 0; j < rest.length; j++) {
+    if (rest[j] === subField) continue;
+    secHtml += tcSection(fieldLabel(rest[j]), reading[rest[j]]);
+  }
+  var grad = tcGrad(headline);
+  var html =
+    '<article class="aios-tc" data-aios-templated-card="1" style="background:' + grad + '">' +
+    (CONFIG.productName ? '<p class="aios-tc-kicker">' + esc(CONFIG.productName) + "</p>" : "") +
+    '<h2 class="aios-tc-headline">' + esc(String(headline)) + "</h2>" +
+    (subField ? '<p class="aios-tc-sub">' + esc(String(reading[subField])) + "</p>" : "") +
+    secHtml +
+    '<p class="aios-tc-foot">your result \u00b7 keep or share</p>' +
+    "</article>";
+  return { html: html, css: TEMPLATED_CARD_CSS };
+}
+
 // ---- result screen (teaser card) + capture ----
 function renderResult(reading, ctx) {
   const r = clear(); if (!r) return;
@@ -95,19 +171,36 @@ function renderResult(reading, ctx) {
   const box = $("div", { "data-aios-result": "1", style: { maxWidth: "40rem", margin: "0 auto", display: "flex", flexDirection: "column", gap: sp(4) } });
 
   // The templated CSS/HTML card (no per-user image generation).
-  if (CONFIG.hasCard && RENDER_CARD) {
-    try {
-      const card = RENDER_CARD(reading, 0);
-      // A synthesized renderCard may return either a raw HTML string OR an object
-      // { html, css }. Handle both so the templated card actually renders.
-      let html = "", css = "";
-      if (typeof card === "string") html = card;
-      else if (card && typeof card === "object") { html = card.html || card.markup || ""; css = card.css || ""; }
-      if (html || css) {
-        if (css) box.appendChild($("style", { html: String(css) }));
-        box.appendChild($("div", { "data-aios-card": "1", style: { maxWidth: "100%", overflowX: "auto" }, html: String(html) }));
-      }
-    } catch (e) { /* fall through to fields */ }
+  if (CONFIG.hasCard) {
+    let placed = false;
+    if (RENDER_CARD) {
+      try {
+        const card = RENDER_CARD(reading, 0);
+        // A synthesized renderCard may return a self-contained HTML string OR an
+        // object { html, css }. It is VALID only if the html actually contains
+        // HTML markup. A renderCard that returns bare CSS (no tags) - the exact
+        // bug that printed a stylesheet as body text - is INVALID: never inject a
+        // tag-less string as innerHTML.
+        let html = "", css = "";
+        if (typeof card === "string") html = card;
+        else if (card && typeof card === "object") { html = card.html || card.markup || ""; css = card.css || ""; }
+        const hasTag = /<[a-z][\s\S]*>/i.test(String(html));
+        if (hasTag) {
+          if (css) box.appendChild($("style", { html: String(css) }));
+          box.appendChild($("div", { "data-aios-card": "1", "data-aios-card-source": "synthesized", style: { maxWidth: "100%", overflowX: "auto" }, html: String(html) }));
+          placed = true;
+        }
+      } catch (e) { /* fall through to the deterministic card */ }
+    }
+    if (!placed) {
+      // LOUD fallback: the synthesized card was missing or invalid (e.g. it
+      // returned CSS only). The factory renders a real designed card from the
+      // reading DATA, so the owner still gets a share-worthy card at $0.
+      try { console.warn("[aios] synthesized card invalid or absent - rendered the deterministic templated card instead"); } catch (e2) {}
+      const tc = renderTemplatedCard(reading);
+      box.appendChild($("style", { html: tc.css }));
+      box.appendChild($("div", { "data-aios-card": "1", "data-aios-card-source": "templated-fallback", style: { maxWidth: "100%", overflowX: "auto" }, html: tc.html }));
+    }
   }
   if (!box.querySelector("[data-aios-card]")) {
     // No card (e.g. a diagnostic): render the declared result fields as the teaser.
@@ -148,7 +241,10 @@ function renderCapture(reading, ctx) {
     const archetype = reading.archetype_name || reading.overall_grade || reading.archetype || "result";
     const tags = deriveTags(reading, ctx);
     try {
-      const res = await fetch("/capture", { method: "POST", headers: { "content-type": "application/json" },
+      // Relative path (not "/capture"): resolves to /capture on the real server
+      // (page served at /) AND to .../capture under a preview base path, so the
+      // built app is walkable both live and in the at-the-gate preview.
+      const res = await fetch("capture", { method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: addr, first_name: (ctx && ctx.firstName) || "", archetype: archetype, tags: tags }) });
       if (!res.ok) throw new Error("capture failed");
       // Only AFTER the capture is recorded do we reveal the full reading.
