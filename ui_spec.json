@@ -1,11 +1,11 @@
 {
   "contract": "ui_spec",
   "schema_version": "1.0.0",
-  "ui_spec_id": "b1303c3c-28ed-45fe-9c55-ce87cea90fbf",
-  "blueprint_id": "70ad588f-cb9c-4f6e-91ac-6ba88c3b6023",
+  "ui_spec_id": "a8d66b6a-6eee-45f9-b5b1-488b0ed3a555",
+  "blueprint_id": "6938c7ca-72b7-4441-87b1-64b3ae07e200",
   "slug": "alter-ego",
   "is_test": false,
-  "created_at": "2026-07-15T13:25:12.673Z",
+  "created_at": "2026-07-15T15:23:33.087Z",
   "theme": {
     "kit": "ui-primitives",
     "mode": "system"
@@ -21,7 +21,7 @@
           "type": "app-flow",
           "props": {
             "shape": "answers-result",
-            "intro": "FREE, forever. Paste nothing — just answer 5 quick, revealing questions. In",
+            "intro": "Free, forever. Answer 5 quick, revealing questions and meet your Alter Ego.",
             "question_count": 5,
             "ask_name": true,
             "has_card": true,
@@ -42,8 +42,34 @@
               "motto / chapter theme-word",
               "narrative"
             ],
-            "pattern": "Ask -> Generate -> Reveal -> Capture -> Share",
-            "product_name": "Alter Ego"
+            "pattern": "Ask -> Generate -> Reveal -> Capture -> Reward -> Share",
+            "product_name": "Alter Ego",
+            "share": {
+              "url": "https://macleanmarket.com/alterego",
+              "cta": "What's your Alter Ego?"
+            },
+            "market_link": {
+              "label": "More from MacLean Market",
+              "url": "https://macleanmarket.com"
+            },
+            "capture_reward_cards": [
+              {
+                "id": "friend_group_ego",
+                "label": "Friend Group Ego",
+                "kind": "card",
+                "lens": "friend_group"
+              },
+              {
+                "id": "shadow_ego",
+                "label": "Shadow Ego",
+                "kind": "card",
+                "lens": "shadow"
+              }
+            ],
+            "bio_line": {
+              "enabled": true,
+              "linkedin": true
+            }
           }
         }
       ]

@@ -5,11 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What's the first word people use to describe you?",
-    "What's a quality you're most proud to be known for?",
-    "Where do you feel completely in your element?",
-    "How do you handle conflict?",
-    "What passion makes you lose track of time?"
+    "What's the one word that describes how you show up in a group?",
+    "What kind of problem do you love solving most?",
+    "When you feel most like yourself, what are you doing?",
+    "What quality do you admire in others that you also have?",
+    "What's the most authentic part of you that you share?"
   ],
   "askName": true,
   "hasCard": true,
@@ -27,7 +27,33 @@ const CONFIG = {
     "narrative"
   ],
   "productName": "Alter Ego",
-  "intro": "FREE, forever. Paste nothing — just answer 5 quick, revealing questions. In"
+  "intro": "Free, forever. Answer 5 quick, revealing questions and meet your Alter Ego.",
+  "share": {
+    "url": "https://macleanmarket.com/alterego",
+    "cta": "What's your Alter Ego?"
+  },
+  "marketLink": {
+    "label": "More from MacLean Market",
+    "url": "https://macleanmarket.com"
+  },
+  "rewardCards": [
+    {
+      "id": "friend_group_ego",
+      "label": "Friend Group Ego",
+      "kind": "card",
+      "lens": "friend_group"
+    },
+    {
+      "id": "shadow_ego",
+      "label": "Shadow Ego",
+      "kind": "card",
+      "lens": "shadow"
+    }
+  ],
+  "bioLine": {
+    "enabled": true,
+    "linkedin": true
+  }
 };
 const RENDER_CARD = renderCard;
 
@@ -129,9 +155,13 @@ function tcSection(label, value) {
   }
   return '<div class="aios-tc-sec"><p class="aios-tc-label">' + esc(label) + '</p><p class="aios-tc-val">' + esc(String(value)) + "</p></div>";
 }
-function renderTemplatedCard(reading) {
+// fieldsOpt overrides the field ORDER (reward cards carry their own fields, not
+// the main result_fields); kicker overrides the small top label (e.g. "Shadow Ego").
+function renderTemplatedCard(reading, fieldsOpt, kicker) {
   reading = reading || {};
-  var fields = (CONFIG.resultFields && CONFIG.resultFields.length) ? CONFIG.resultFields.slice() : Object.keys(reading);
+  var fields = (fieldsOpt && fieldsOpt.length) ? fieldsOpt.slice()
+    : (CONFIG.resultFields && CONFIG.resultFields.length) ? CONFIG.resultFields.slice()
+    : Object.keys(reading);
   fields = fields.filter(function (f) {
     var v = reading[f]; return v != null && v !== "" && !(Array.isArray(v) && !v.length);
   });
@@ -149,10 +179,11 @@ function renderTemplatedCard(reading) {
     if (rest[j] === subField) continue;
     secHtml += tcSection(fieldLabel(rest[j]), reading[rest[j]]);
   }
-  var grad = tcGrad(headline);
+  var kick = kicker || CONFIG.productName;
+  var grad = tcGrad((kicker ? kicker + "|" : "") + headline);
   var html =
     '<article class="aios-tc" data-aios-templated-card="1" style="background:' + grad + '">' +
-    (CONFIG.productName ? '<p class="aios-tc-kicker">' + esc(CONFIG.productName) + "</p>" : "") +
+    (kick ? '<p class="aios-tc-kicker">' + esc(kick) + "</p>" : "") +
     '<h2 class="aios-tc-headline">' + esc(String(headline)) + "</h2>" +
     (subField ? '<p class="aios-tc-sub">' + esc(String(reading[subField])) + "</p>" : "") +
     secHtml +
@@ -161,55 +192,239 @@ function renderTemplatedCard(reading) {
   return { html: html, css: TEMPLATED_CARD_CSS };
 }
 
+// ---- Wave-2: share (the growth loop), polished reveal, market link ----
+function pickFields(reading) {
+  const f = (CONFIG.resultFields && CONFIG.resultFields.length) ? CONFIG.resultFields.slice() : Object.keys(reading || {});
+  return f.filter((k) => { const v = reading[k]; return v != null && v !== "" && !(Array.isArray(v) && !v.length); });
+}
+function cardHeadline(reading) {
+  const f = pickFields(reading); const v = reading[f[0]];
+  return Array.isArray(v) ? v.join(", ") : (v == null ? "" : String(v));
+}
+function cardEssence(reading) {
+  const f = pickFields(reading);
+  for (let i = 1; i < f.length; i++) { const v = reading[f[i]]; if (typeof v === "string" && v.length > 0 && v.length <= 160) return v; }
+  return "";
+}
+// Pre-filled share text: the archetype + one-line essence + the market link, so
+// the user taps post and never writes the caption.
+function shareCaption(reading, title) {
+  const head = title || cardHeadline(reading);
+  const ess = cardEssence(reading);
+  const text = ess ? (head + " \u2014 " + ess) : head;
+  const url = CONFIG.share && CONFIG.share.url ? CONFIG.share.url : "";
+  return url ? (text + "\n\n" + url) : text;
+}
+async function doShare(caption) {
+  try { if (navigator.share) { await navigator.share({ text: caption }); return "shared"; } }
+  catch (e) { if (e && e.name === "AbortError") return "cancelled"; }
+  try { await navigator.clipboard.writeText(caption); return "copied"; }
+  catch (e) { return "failed"; }
+}
+// The HERO share control that travels with a card. small=true is the reward
+// cards' slightly smaller (still prominent) control.
+function renderShareBar(reading, title, small) {
+  const wrap = $("div", { "data-aios-share": "1", style: { display: "flex", flexDirection: "column", alignItems: "center", gap: sp(1) } });
+  const btn = $("button", { type: "button", "data-aios-share-btn": "1", class: "aios-share-cta" + (small ? " sm" : "") }, [
+    "\u21ea " + ((CONFIG.share && CONFIG.share.cta) || "Share your card"),
+  ]);
+  const note = $("p", { "aria-live": "polite", style: { minHeight: "1em", fontSize: "0.78rem", opacity: "0.7", textAlign: "center", margin: "0", whiteSpace: "pre-wrap" } });
+  btn.addEventListener("click", async () => {
+    const cap = shareCaption(reading, title);
+    const r = await doShare(cap);
+    note.textContent = r === "copied" ? "Caption copied - paste it anywhere."
+      : r === "shared" ? "Thanks for sharing!"
+      : r === "cancelled" ? ""
+      : cap; // last resort: show the caption to copy manually
+  });
+  wrap.appendChild(btn); wrap.appendChild(note);
+  return wrap;
+}
+// The polished, DESIGNED on-screen full reading (never the raw field dump).
+function renderReading(reading, fields) {
+  const wrap = $("div", { "data-aios-fields": "full", "data-aios-reading": "1", class: "aios-reading" });
+  for (const f of fields) {
+    const v = reading[f];
+    if (v == null || v === "") continue;
+    const sec = $("div", { class: "aios-reading-sec" });
+    sec.appendChild($("p", { class: "aios-reading-label" }, [fieldLabel(f)]));
+    if (Array.isArray(v)) {
+      const ul = $("ul", { class: "aios-reading-chips" });
+      for (const item of v) { if (item != null && item !== "") ul.appendChild($("li", { class: "aios-reading-chip" }, [String(item)])); }
+      sec.appendChild(ul);
+    } else {
+      sec.appendChild($("p", { class: "aios-reading-val" }, [String(v)]));
+    }
+    wrap.appendChild(sec);
+  }
+  return wrap;
+}
+// The tertiary "More from MacLean Market ->" link (quiet footer-weight).
+function renderMarketLink() {
+  if (!CONFIG.marketLink || !CONFIG.marketLink.url) return null;
+  const wrap = $("div", { class: "aios-market-wrap" });
+  wrap.appendChild($("a", { class: "aios-market-link", href: CONFIG.marketLink.url, target: "_blank", rel: "noreferrer" }, [
+    (CONFIG.marketLink.label || "More from MacLean Market") + " \u2192",
+  ]));
+  return wrap;
+}
+// A card (already-rendered element) + its prominent share control, as one unit.
+function cardUnit(cardEl, reading, title, small) {
+  const unit = $("div", { class: "aios-cardunit" });
+  unit.appendChild(cardEl);
+  if (CONFIG.hasCard) unit.appendChild(renderShareBar(reading, title, small));
+  return unit;
+}
+// Build the main card element (synthesized-or-templated), or null.
+function buildMainCard(reading) {
+  if (!CONFIG.hasCard) return null;
+  if (RENDER_CARD) {
+    try {
+      const card = RENDER_CARD(reading, 0);
+      let html = "", css = "";
+      if (typeof card === "string") html = card;
+      else if (card && typeof card === "object") { html = card.html || card.markup || ""; css = card.css || ""; }
+      if (/<[a-z][\s\S]*>/i.test(String(html))) {
+        const holder = $("div", { style: { display: "contents" } });
+        if (css) holder.appendChild($("style", { html: String(css) }));
+        holder.appendChild($("div", { "data-aios-card": "1", "data-aios-card-source": "synthesized", style: { maxWidth: "100%", overflowX: "auto" }, html: String(html) }));
+        return holder;
+      }
+    } catch (e) { /* fall through */ }
+  }
+  try { console.warn("[aios] synthesized card invalid or absent - rendered the deterministic templated card instead"); } catch (e2) {}
+  const tc = renderTemplatedCard(reading);
+  const holder = $("div", { style: { display: "contents" } });
+  holder.appendChild($("style", { html: tc.css }));
+  holder.appendChild($("div", { "data-aios-card": "1", "data-aios-card-source": "templated-fallback", style: { maxWidth: "100%", overflowX: "auto" }, html: tc.html }));
+  return holder;
+}
+
+// ---- Wave-2: capture-reward cards (the value-for-email) ----
+// The reward cards' DATA comes from the ENGINE (reading.reward_cards[id]) - the
+// factory never fabricates a distinct reading client-side. If the engine did not
+// produce a declared reward card, that is an HONEST GAP the runner/gate catches
+// (the reward reveal fails), not something we paper over.
+function rewardCardData(reading, rc) {
+  const bag = reading && reading.reward_cards;
+  if (bag && bag[rc.id] && typeof bag[rc.id] === "object") return bag[rc.id];
+  if (reading && reading[rc.id] && typeof reading[rc.id] === "object") return reading[rc.id];
+  return null;
+}
+function buildRewardCardEl(data, label) {
+  const tc = renderTemplatedCard(data, Object.keys(data), label);
+  const holder = $("div", { style: { display: "contents" } });
+  holder.appendChild($("style", { html: tc.css }));
+  holder.appendChild($("div", { "data-aios-card": "1", "data-aios-reward-card": "1", style: { maxWidth: "100%", overflowX: "auto" }, html: tc.html }));
+  return holder;
+}
+// Render every declared reward card that the engine produced, each independently
+// shareable, into the given container. Returns how many rendered.
+function renderRewardCards(reading, into) {
+  let n = 0;
+  const mainHead = String(cardHeadline(reading) || "").trim().toLowerCase();
+  for (const rc of (CONFIG.rewardCards || [])) {
+    const data = rewardCardData(reading, rc);
+    const sec = $("div", { "data-aios-reward": rc.id, style: { display: "flex", flexDirection: "column", gap: sp(2) } });
+    sec.appendChild($("p", { class: "aios-reading-label", style: { margin: "0" } }, [rc.label || fieldLabel(rc.id)]));
+    if (!data) {
+      // Honest gap - never a fabricated card.
+      sec.appendChild($("p", { style: { fontSize: "0.85rem", opacity: "0.65", margin: "0" } }, ["This bonus card was not produced for this build yet."]));
+      sec.setAttribute("data-aios-reward-missing", "1");
+    } else {
+      const head = String(cardHeadline(data) || "").trim().toLowerCase();
+      // Distinctness: a reward card that just restates the main card is a fail.
+      if (head && head === mainHead) sec.setAttribute("data-aios-reward-redundant", "1");
+      sec.appendChild(cardUnit(buildRewardCardEl(data, rc.label), data, cardHeadline(data), true));
+      n++;
+    }
+    into.appendChild(sec);
+  }
+  return n;
+}
+// ---- Wave-2: the bio line (a copyable self-descriptor to append to a social bio) ----
+// Data from the ENGINE (reading.bio_line: a string, or { universal, linkedin }).
+// Defensive: strip emoji and hard-cap length so the on-screen line always meets
+// the "no emoji, well under 150 chars" bar even if the engine drifts.
+function sanitizeBio(s) {
+  var t = String(s || "").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}\uFE0F]/gu, "").replace(/\s+/g, " ").trim();
+  if (t.length > 150) t = t.slice(0, 147).replace(/\s+\S*$/, "") + "…";
+  return t;
+}
+function bioLineData(reading) {
+  var b = reading && reading.bio_line;
+  if (!b) return null;
+  if (typeof b === "string") return { universal: sanitizeBio(b) };
+  if (typeof b === "object") return { universal: sanitizeBio(b.universal || b.line || ""), linkedin: b.linkedin ? sanitizeBio(b.linkedin) : "" };
+  return null;
+}
+function copyRow(label, text) {
+  var row = $("div", { "data-aios-bioline": "1", style: { display: "flex", flexDirection: "column", gap: sp(1) } });
+  if (label) row.appendChild($("p", { class: "aios-reading-label", style: { margin: "0" } }, [label]));
+  var line = $("p", { "data-aios-bio-text": "1", style: { margin: "0", fontSize: "1rem", lineHeight: "1.5" } }, [text]);
+  var btn = $("button", { type: "button", "data-aios-copy": "1", class: "aios-copy-btn" }, ["Copy"]);
+  var note = $("span", { "aria-live": "polite", style: { fontSize: "0.75rem", opacity: "0.7", marginLeft: sp(2) } });
+  btn.addEventListener("click", async function () {
+    try { await navigator.clipboard.writeText(text); note.textContent = "Copied!"; }
+    catch (e) { note.textContent = "Select the line to copy."; }
+  });
+  var bar = $("div", { style: { display: "flex", alignItems: "center", gap: sp(2), flexWrap: "wrap" } });
+  bar.appendChild(btn); bar.appendChild(note);
+  row.appendChild(line); row.appendChild(bar);
+  return row;
+}
+function renderBioLine(reading) {
+  if (!CONFIG.bioLine || !CONFIG.bioLine.enabled) return null;
+  var data = bioLineData(reading);
+  var wrap = $("div", { "data-aios-bio": "1", class: "aios-reading", style: { gap: sp(3) } });
+  wrap.appendChild($("p", { class: "aios-reading-label", style: { margin: "0" } }, ["Your bio line - add it to your profile"]));
+  if (!data || !data.universal) {
+    wrap.appendChild($("p", { style: { margin: "0", fontSize: "0.85rem", opacity: "0.65" } }, ["Your bio line was not produced for this build yet."]));
+    wrap.setAttribute("data-aios-bio-missing", "1");
+    return wrap;
+  }
+  wrap.appendChild(copyRow("", data.universal));
+  if (CONFIG.bioLine.linkedin && data.linkedin) wrap.appendChild(copyRow("LinkedIn", data.linkedin));
+  return wrap;
+}
+
+// The tease that earns the email: name the reward in enticing plain copy.
+function captureTeaseText() {
+  const labels = (CONFIG.rewardCards || []).map((rc) => rc.label || fieldLabel(rc.id)).filter(Boolean);
+  const base = "Enter your email to get your full reading";
+  if (!labels.length) return base + ".";
+  const joined = labels.length === 1 ? labels[0]
+    : labels.slice(0, -1).join(", ") + " and " + labels[labels.length - 1];
+  return base + " plus your " + joined + ".";
+}
+
 // ---- result screen (teaser card) + capture ----
 function renderResult(reading, ctx) {
   const r = clear(); if (!r) return;
   r.setAttribute("data-screen", "result");
   const box = $("div", { "data-aios-result": "1", style: { maxWidth: "40rem", margin: "0 auto", display: "flex", flexDirection: "column", gap: sp(4) } });
 
-  // The templated CSS/HTML card (no per-user image generation).
-  if (CONFIG.hasCard) {
-    let placed = false;
-    if (RENDER_CARD) {
-      try {
-        const card = RENDER_CARD(reading, 0);
-        // A synthesized renderCard may return a self-contained HTML string OR an
-        // object { html, css }. It is VALID only if the html actually contains
-        // HTML markup. A renderCard that returns bare CSS (no tags) - the exact
-        // bug that printed a stylesheet as body text - is INVALID: never inject a
-        // tag-less string as innerHTML.
-        let html = "", css = "";
-        if (typeof card === "string") html = card;
-        else if (card && typeof card === "object") { html = card.html || card.markup || ""; css = card.css || ""; }
-        const hasTag = /<[a-z][\s\S]*>/i.test(String(html));
-        if (hasTag) {
-          if (css) box.appendChild($("style", { html: String(css) }));
-          box.appendChild($("div", { "data-aios-card": "1", "data-aios-card-source": "synthesized", style: { maxWidth: "100%", overflowX: "auto" }, html: String(html) }));
-          placed = true;
-        }
-      } catch (e) { /* fall through to the deterministic card */ }
-    }
-    if (!placed) {
-      // LOUD fallback: the synthesized card was missing or invalid (e.g. it
-      // returned CSS only). The factory renders a real designed card from the
-      // reading DATA, so the owner still gets a share-worthy card at $0.
-      try { console.warn("[aios] synthesized card invalid or absent - rendered the deterministic templated card instead"); } catch (e2) {}
-      const tc = renderTemplatedCard(reading);
-      box.appendChild($("style", { html: tc.css }));
-      box.appendChild($("div", { "data-aios-card": "1", "data-aios-card-source": "templated-fallback", style: { maxWidth: "100%", overflowX: "auto" }, html: tc.html }));
-    }
-  }
-  if (!box.querySelector("[data-aios-card]")) {
-    // No card (e.g. a diagnostic): render the declared result fields as the teaser.
+  // (1) HERO: the card + its prominent Share control travel together as one unit.
+  const cardEl = buildMainCard(reading);
+  if (cardEl) {
+    box.appendChild(cardUnit(cardEl, reading, cardHeadline(reading), false));
+  } else {
+    // No card (e.g. a diagnostic): the result fields are the teaser.
     box.appendChild(renderFields(reading, CONFIG.resultFields.slice(0, 3), "teaser"));
   }
 
+  // (2) SECOND: the email ask - or, when there is no capture, the full reveal now.
   if (CONFIG.capture.enabled) {
     box.appendChild(renderCapture(reading, ctx));
   } else {
-    box.appendChild(renderFields(reading, CONFIG.resultFields, "full"));
+    box.appendChild(renderReading(reading, pickFields(reading)));
     box.setAttribute("data-aios-full", "1");
   }
+
+  // (3) TERTIARY: the quiet "More from MacLean Market" link (footer-weight).
+  const ml = renderMarketLink();
+  if (ml) box.appendChild(ml);
+
   r.appendChild(box);
 }
 
@@ -227,7 +442,8 @@ function renderFields(reading, fields, tag) {
 // ---- capture: write to CRM BEFORE revealing the full reading ----
 function renderCapture(reading, ctx) {
   const wrap = $("div", { "data-aios-capture": "1", style: { display: "flex", flexDirection: "column", gap: sp(2), padding: sp(4), border: "1px solid var(--aios-color-border,#ccc)", borderRadius: "var(--aios-radius-md,6px)" } });
-  wrap.appendChild($("p", null, ["Enter your email to unlock " + (CONFIG.capture.unlocks || "your full result") + "."]));
+  // The TEASE: name the reward in enticing plain copy - the hook that earns the email.
+  wrap.appendChild($("p", { class: "aios-tease", "data-aios-tease": "1" }, [captureTeaseText()]));
   const email = $("input", { type: "email", "data-aios-email": "1", placeholder: "you@example.com", required: "true", style: { padding: sp(3), fontSize: "1rem", border: "1px solid var(--aios-color-border,#ccc)", borderRadius: "var(--aios-radius-md,6px)", boxSizing: "border-box", width: "100%", maxWidth: "100%" } });
   const btn = $("button", { type: "button", "data-aios-capture-submit": "1", style: { padding: sp(3), border: "0", borderRadius: "var(--aios-radius-md,6px)", background: "var(--aios-color-accent,#2563eb)", color: "var(--aios-color-on-accent,#fff)", cursor: "pointer" } }, ["Unlock my full result"]);
   const note = $("p", { "aria-live": "polite", style: { minHeight: "1.2em", fontSize: "0.9rem", opacity: "0.8" } });
@@ -244,10 +460,23 @@ function renderCapture(reading, ctx) {
       const res = await fetch("capture", { method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: addr, first_name: (ctx && ctx.firstName) || "", archetype: archetype, tags: tags }) });
       if (!res.ok) throw new Error("capture failed");
-      // Only AFTER the capture is recorded do we reveal the full reading.
+      // Only AFTER the capture is recorded do we reveal the full reading - as a
+      // polished, DESIGNED section (never the raw field dump). The market link, if
+      // present, stays last.
       const box = wrap.parentNode;
       wrap.remove();
-      box.appendChild(renderFields(reading, CONFIG.resultFields, "full"));
+      const mlEl = box.querySelector(".aios-market-wrap");
+      const insert = (el) => { if (mlEl) box.insertBefore(el, mlEl); else box.appendChild(el); };
+      // The full reading (polished), then the capture-reward cards (each shareable).
+      insert(renderReading(reading, pickFields(reading)));
+      if ((CONFIG.rewardCards || []).length) {
+        const rewardWrap = $("div", { "data-aios-rewards": "1", style: { display: "flex", flexDirection: "column", gap: sp(4) } });
+        renderRewardCards(reading, rewardWrap);
+        insert(rewardWrap);
+      }
+      // The copyable bio line (a small self-descriptor for their social profile).
+      const bio = renderBioLine(reading);
+      if (bio) insert(bio);
       box.setAttribute("data-aios-full", "1");
     } catch (e) { btn.disabled = false; note.textContent = "Could not save right now - try again."; }
   });
@@ -273,6 +502,28 @@ function injectResponsiveReset() {
     "#aios-app-root{box-sizing:border-box;max-width:100%;padding:var(--aios-space-4,1rem)}" +
     "#aios-app-root *{max-width:100%;box-sizing:border-box}" +
     "#aios-app-root img{height:auto}" +
+    // Wave-2 growth surfaces. Share is the HERO: a prominent, animated (sheen) CTA.
+    ".aios-share-cta{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.95rem 1rem;border:0;border-radius:13px;font-size:1.05rem;font-weight:800;letter-spacing:.2px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#7c3aed,#2563eb);box-shadow:0 12px 28px -8px rgba(37,99,235,.6);position:relative;overflow:hidden}" +
+    ".aios-share-cta::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 32%,rgba(255,255,255,.4) 50%,transparent 68%);transform:translateX(-120%);animation:aios-sheen 2.8s ease-in-out infinite}" +
+    ".aios-share-cta:hover{filter:brightness(1.07)}" +
+    "@keyframes aios-sheen{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}" +
+    ".aios-share-cta.sm{width:auto;padding:.5rem .85rem;font-size:.82rem;border-radius:10px;box-shadow:0 6px 16px -6px rgba(37,99,235,.5)}" +
+    ".aios-share-cta.sm::after{animation-duration:3.4s}" +
+    // The polished on-screen full reveal (a designed section, NOT a raw field dump).
+    ".aios-reading{display:flex;flex-direction:column;gap:1rem;margin-top:.3rem;padding:1.15rem 1.2rem;border-radius:14px;background:rgba(127,127,127,.06);border:1px solid rgba(127,127,127,.18)}" +
+    ".aios-reading-label{margin:0 0 .3rem;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;opacity:.6}" +
+    ".aios-reading-val{margin:0;font-size:1rem;line-height:1.55;white-space:pre-wrap}" +
+    ".aios-reading-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.1rem 0 0;padding:0;list-style:none}" +
+    ".aios-reading-chip{padding:.28rem .7rem;border-radius:999px;font-size:.85rem;background:rgba(127,127,127,.14);border:1px solid rgba(127,127,127,.24)}" +
+    // The tertiary market link + the capture tease.
+    ".aios-market-wrap{text-align:center;margin-top:.3rem}" +
+    ".aios-market-link{display:inline-block;font-size:.8rem;opacity:.55;text-decoration:none;color:inherit;border-bottom:1px solid transparent}" +
+    ".aios-market-link:hover{opacity:.9;border-bottom-color:currentColor}" +
+    ".aios-tease{margin:0 0 .55rem;font-size:.98rem;font-weight:600;line-height:1.45}" +
+    ".aios-copy-btn{padding:.45rem .9rem;border-radius:9px;border:1px solid rgba(127,127,127,.35);background:rgba(127,127,127,.08);font-size:.85rem;font-weight:600;cursor:pointer;color:inherit}" +
+    ".aios-copy-btn:hover{background:rgba(127,127,127,.16)}" +
+    // A shareable card + its share control travel together as one unit.
+    ".aios-cardunit{display:flex;flex-direction:column;gap:.6rem}" +
     "@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}";
   document.head.appendChild(style);
 }
