@@ -5,11 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What's the one word that describes how you show up in a group?",
-    "What kind of problem do you love solving most?",
-    "When you feel most like yourself, what are you doing?",
-    "What quality do you admire in others that you also have?",
-    "What's the most authentic part of you that you share?"
+    "What's the one word that describes your everyday energy?",
+    "Where do you feel most like your true self?",
+    "What strength do you share without thinking?",
+    "What's the one thing you'd want to be known for?",
+    "What's the most surprising positive quality people say about you?"
   ],
   "askName": true,
   "hasCard": true,
@@ -159,12 +159,9 @@ function tcSection(label, value) {
 // the main result_fields); kicker overrides the small top label (e.g. "Shadow Ego").
 function renderTemplatedCard(reading, fieldsOpt, kicker) {
   reading = reading || {};
-  var fields = (fieldsOpt && fieldsOpt.length) ? fieldsOpt.slice()
-    : (CONFIG.resultFields && CONFIG.resultFields.length) ? CONFIG.resultFields.slice()
-    : Object.keys(reading);
-  fields = fields.filter(function (f) {
-    var v = reading[f]; return v != null && v !== "" && !(Array.isArray(v) && !v.length);
-  });
+  var fields = (fieldsOpt && fieldsOpt.length)
+    ? fieldsOpt.filter(function (f) { return fieldPresent(reading, f); })
+    : pickFields(reading);
   var headField = fields[0];
   var headline = headField ? reading[headField] : (CONFIG.productName || "Your result");
   if (Array.isArray(headline)) headline = headline.join(", ");
@@ -186,16 +183,24 @@ function renderTemplatedCard(reading, fieldsOpt, kicker) {
     (kick ? '<p class="aios-tc-kicker">' + esc(kick) + "</p>" : "") +
     '<h2 class="aios-tc-headline">' + esc(String(headline)) + "</h2>" +
     (subField ? '<p class="aios-tc-sub">' + esc(String(reading[subField])) + "</p>" : "") +
-    secHtml +
-    '<p class="aios-tc-foot">your result \u00b7 keep or share</p>' +
+    '<div class="aios-tc-body">' + secHtml + "</div>" +
+    // FIX 5: the "your result - keep or share" foot line is removed. The card's
+    // affordances (Share / Add-to-bio / market) are appended by the client as a
+    // data-no-share bar INSIDE this article, so they are never baked into the
+    // shareable card image.
     "</article>";
   return { html: html, css: TEMPLATED_CARD_CSS };
 }
 
 // ---- Wave-2: share (the growth loop), polished reveal, market link ----
+function fieldPresent(reading, k) { const v = reading[k]; return v != null && v !== "" && !(Array.isArray(v) && !v.length); }
 function pickFields(reading) {
-  const f = (CONFIG.resultFields && CONFIG.resultFields.length) ? CONFIG.resultFields.slice() : Object.keys(reading || {});
-  return f.filter((k) => { const v = reading[k]; return v != null && v !== "" && !(Array.isArray(v) && !v.length); });
+  reading = reading || {};
+  // Prefer the declared result fields, but a card with its OWN field shape (a
+  // reward card) falls back to its own keys - so every card renders correctly.
+  const rf = (CONFIG.resultFields && CONFIG.resultFields.length) ? CONFIG.resultFields.filter((k) => fieldPresent(reading, k)) : [];
+  if (rf.length) return rf;
+  return Object.keys(reading).filter((k) => fieldPresent(reading, k));
 }
 function cardHeadline(reading) {
   const f = pickFields(reading); const v = reading[f[0]];
@@ -221,26 +226,8 @@ async function doShare(caption) {
   try { await navigator.clipboard.writeText(caption); return "copied"; }
   catch (e) { return "failed"; }
 }
-// The HERO share control that travels with a card. small=true is the reward
-// cards' slightly smaller (still prominent) control.
-function renderShareBar(reading, title, small) {
-  const wrap = $("div", { "data-aios-share": "1", style: { display: "flex", flexDirection: "column", alignItems: "center", gap: sp(1) } });
-  const btn = $("button", { type: "button", "data-aios-share-btn": "1", class: "aios-share-cta" + (small ? " sm" : "") }, [
-    "\u21ea " + ((CONFIG.share && CONFIG.share.cta) || "Share your card"),
-  ]);
-  const note = $("p", { "aria-live": "polite", style: { minHeight: "1em", fontSize: "0.78rem", opacity: "0.7", textAlign: "center", margin: "0", whiteSpace: "pre-wrap" } });
-  btn.addEventListener("click", async () => {
-    const cap = shareCaption(reading, title);
-    const r = await doShare(cap);
-    note.textContent = r === "copied" ? "Caption copied - paste it anywhere."
-      : r === "shared" ? "Thanks for sharing!"
-      : r === "cancelled" ? ""
-      : cap; // last resort: show the caption to copy manually
-  });
-  wrap.appendChild(btn); wrap.appendChild(note);
-  return wrap;
-}
-// The polished, DESIGNED on-screen full reading (never the raw field dump).
+// The polished, DESIGNED on-screen reading (used only for NO-CARD products; card
+// products show the reading inside the card itself).
 function renderReading(reading, fields) {
   const wrap = $("div", { "data-aios-fields": "full", "data-aios-reading": "1", class: "aios-reading" });
   for (const f of fields) {
@@ -268,35 +255,77 @@ function renderMarketLink() {
   ]));
   return wrap;
 }
-// A card (already-rendered element) + its prominent share control, as one unit.
-function cardUnit(cardEl, reading, title, small) {
-  const unit = $("div", { class: "aios-cardunit" });
-  unit.appendChild(cardEl);
-  if (CONFIG.hasCard) unit.appendChild(renderShareBar(reading, title, small));
-  return unit;
+// Per-card bio line (FIX 2): the MAIN card uses the engine's polished bio_line
+// (with the optional LinkedIn variant); a reward card derives a short line from
+// its OWN archetype + essence, same hard rules (no emoji, well under 150 chars).
+function perCardBio(reading, opts) {
+  if (opts && opts.mainBio != null) return bioLineData({ bio_line: opts.mainBio });
+  const head = cardHeadline(reading);
+  if (!head) return null;
+  const ess = cardEssence(reading);
+  const line = ess ? (head + ", " + ess.charAt(0).toLowerCase() + ess.slice(1)) : head;
+  const u = sanitizeBio(line);
+  return u ? { universal: u } : null;
 }
-// Build the main card element (synthesized-or-templated), or null.
-function buildMainCard(reading) {
-  if (!CONFIG.hasCard) return null;
-  if (RENDER_CARD) {
-    try {
-      const card = RENDER_CARD(reading, 0);
-      let html = "", css = "";
-      if (typeof card === "string") html = card;
-      else if (card && typeof card === "object") { html = card.html || card.markup || ""; css = card.css || ""; }
-      if (/<[a-z][\s\S]*>/i.test(String(html))) {
-        const holder = $("div", { style: { display: "contents" } });
-        if (css) holder.appendChild($("style", { html: String(css) }));
-        holder.appendChild($("div", { "data-aios-card": "1", "data-aios-card-source": "synthesized", style: { maxWidth: "100%", overflowX: "auto" }, html: String(html) }));
-        return holder;
-      }
-    } catch (e) { /* fall through */ }
+// One "Add to your bio" row: the line + a one-click Copy.
+function inCardBioRow(label, text) {
+  const row = $("div", { class: "aios-incard-bio", "data-aios-bioline": "1" });
+  row.appendChild($("p", { class: "aios-incard-biolabel" }, [label]));
+  row.appendChild($("p", { class: "aios-incard-biotext", "data-aios-bio-text": "1" }, [text]));
+  const btn = $("button", { type: "button", "data-aios-copy": "1", class: "aios-incard-copy" }, ["Copy"]);
+  const note = $("span", { "aria-live": "polite", class: "aios-incard-copynote" });
+  btn.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(text); note.textContent = "Copied!"; }
+    catch (e) { note.textContent = "Select to copy."; }
+  });
+  const bar = $("div", { class: "aios-incard-copyrow" }); bar.appendChild(btn); bar.appendChild(note);
+  row.appendChild(bar);
+  return row;
+}
+// The affordances that live INSIDE the card frame (FIX 3,4,2,6), marked
+// data-no-share so they are EXCLUDED from the shareable card image.
+function buildCardActions(reading, opts) {
+  opts = opts || {};
+  const bar = $("div", { class: "aios-tc-actions", "data-no-share": "1" });
+  // FIX 3 + 4: the BUTTON reads "Share your <card>"; the pre-filled CAPTION is
+  // still the archetype + essence + link (share.cta may seed it).
+  const label = opts.label || CONFIG.productName || "card";
+  const btn = $("button", { type: "button", "data-aios-share-btn": "1", class: "aios-incard-share" }, ["Share your " + label]);
+  const note = $("span", { "aria-live": "polite", class: "aios-incard-note" });
+  btn.addEventListener("click", async () => {
+    const cap = shareCaption(reading, cardHeadline(reading));
+    const r = await doShare(cap);
+    note.textContent = r === "copied" ? "Caption copied." : r === "shared" ? "Shared!" : r === "cancelled" ? "" : cap;
+  });
+  const shareRow = $("div", { class: "aios-incard-sharerow" }); shareRow.appendChild(btn); shareRow.appendChild(note);
+  bar.appendChild(shareRow);
+  // FIX 2: add-to-bio + Copy, on THIS card.
+  const bio = perCardBio(reading, opts);
+  if (bio && bio.universal) {
+    bar.appendChild(inCardBioRow("Add to your bio", bio.universal));
+    if (bio.linkedin) bar.appendChild(inCardBioRow("LinkedIn", bio.linkedin));
   }
-  try { console.warn("[aios] synthesized card invalid or absent - rendered the deterministic templated card instead"); } catch (e2) {}
-  const tc = renderTemplatedCard(reading);
+  // FIX 6: a quiet per-card market link (in addition to the page footer).
+  if (CONFIG.marketLink && CONFIG.marketLink.url) {
+    bar.appendChild($("a", { class: "aios-incard-market", "data-aios-market": "1", href: CONFIG.marketLink.url, target: "_blank", rel: "noreferrer" }, [
+      (CONFIG.marketLink.label || "More from MacLean Market") + " \u2192",
+    ]));
+  }
+  return bar;
+}
+// Build a full card (templated renderer) with its in-card affordances. Unified for
+// the main card AND the reward cards, so every card is controllable + consistent
+// and the affordances always sit INSIDE the gradient frame.
+function buildCardElement(reading, opts) {
+  opts = opts || {};
+  const tc = renderTemplatedCard(reading, opts.reward ? Object.keys(reading) : null, opts.label || CONFIG.productName);
   const holder = $("div", { style: { display: "contents" } });
   holder.appendChild($("style", { html: tc.css }));
-  holder.appendChild($("div", { "data-aios-card": "1", "data-aios-card-source": "templated-fallback", style: { maxWidth: "100%", overflowX: "auto" }, html: tc.html }));
+  const cardDiv = $("div", { "data-aios-card": "1", "data-aios-card-source": "templated", style: { maxWidth: "100%", overflowX: "auto" }, html: tc.html });
+  if (opts.reward) cardDiv.setAttribute("data-aios-reward-card", "1");
+  holder.appendChild(cardDiv);
+  const article = cardDiv.querySelector(".aios-tc");
+  if (article && CONFIG.hasCard) article.appendChild(buildCardActions(reading, opts));
   return holder;
 }
 
@@ -311,31 +340,23 @@ function rewardCardData(reading, rc) {
   if (reading && reading[rc.id] && typeof reading[rc.id] === "object") return reading[rc.id];
   return null;
 }
-function buildRewardCardEl(data, label) {
-  const tc = renderTemplatedCard(data, Object.keys(data), label);
-  const holder = $("div", { style: { display: "contents" } });
-  holder.appendChild($("style", { html: tc.css }));
-  holder.appendChild($("div", { "data-aios-card": "1", "data-aios-reward-card": "1", style: { maxWidth: "100%", overflowX: "auto" }, html: tc.html }));
-  return holder;
-}
-// Render every declared reward card that the engine produced, each independently
-// shareable, into the given container. Returns how many rendered.
+// Render every declared reward card that the engine produced, each an independent
+// card with its OWN in-card Share / bio / market affordances. Returns how many.
 function renderRewardCards(reading, into) {
   let n = 0;
   const mainHead = String(cardHeadline(reading) || "").trim().toLowerCase();
   for (const rc of (CONFIG.rewardCards || [])) {
     const data = rewardCardData(reading, rc);
     const sec = $("div", { "data-aios-reward": rc.id, style: { display: "flex", flexDirection: "column", gap: sp(2) } });
-    sec.appendChild($("p", { class: "aios-reading-label", style: { margin: "0" } }, [rc.label || fieldLabel(rc.id)]));
     if (!data) {
       // Honest gap - never a fabricated card.
-      sec.appendChild($("p", { style: { fontSize: "0.85rem", opacity: "0.65", margin: "0" } }, ["This bonus card was not produced for this build yet."]));
+      sec.appendChild($("p", { style: { fontSize: "0.85rem", opacity: "0.65", margin: "0" } }, [(rc.label || fieldLabel(rc.id)) + ": not produced for this build yet."]));
       sec.setAttribute("data-aios-reward-missing", "1");
     } else {
       const head = String(cardHeadline(data) || "").trim().toLowerCase();
       // Distinctness: a reward card that just restates the main card is a fail.
       if (head && head === mainHead) sec.setAttribute("data-aios-reward-redundant", "1");
-      sec.appendChild(cardUnit(buildRewardCardEl(data, rc.label), data, cardHeadline(data), true));
+      sec.appendChild(buildCardElement(data, { label: rc.label || fieldLabel(rc.id), reward: true }));
       n++;
     }
     into.appendChild(sec);
@@ -358,44 +379,15 @@ function bioLineData(reading) {
   if (typeof b === "object") return { universal: sanitizeBio(b.universal || b.line || ""), linkedin: b.linkedin ? sanitizeBio(b.linkedin) : "" };
   return null;
 }
-function copyRow(label, text) {
-  var row = $("div", { "data-aios-bioline": "1", style: { display: "flex", flexDirection: "column", gap: sp(1) } });
-  if (label) row.appendChild($("p", { class: "aios-reading-label", style: { margin: "0" } }, [label]));
-  var line = $("p", { "data-aios-bio-text": "1", style: { margin: "0", fontSize: "1rem", lineHeight: "1.5" } }, [text]);
-  var btn = $("button", { type: "button", "data-aios-copy": "1", class: "aios-copy-btn" }, ["Copy"]);
-  var note = $("span", { "aria-live": "polite", style: { fontSize: "0.75rem", opacity: "0.7", marginLeft: sp(2) } });
-  btn.addEventListener("click", async function () {
-    try { await navigator.clipboard.writeText(text); note.textContent = "Copied!"; }
-    catch (e) { note.textContent = "Select the line to copy."; }
-  });
-  var bar = $("div", { style: { display: "flex", alignItems: "center", gap: sp(2), flexWrap: "wrap" } });
-  bar.appendChild(btn); bar.appendChild(note);
-  row.appendChild(line); row.appendChild(bar);
-  return row;
-}
-function renderBioLine(reading) {
-  if (!CONFIG.bioLine || !CONFIG.bioLine.enabled) return null;
-  var data = bioLineData(reading);
-  var wrap = $("div", { "data-aios-bio": "1", class: "aios-reading", style: { gap: sp(3) } });
-  wrap.appendChild($("p", { class: "aios-reading-label", style: { margin: "0" } }, ["Your bio line - add it to your profile"]));
-  if (!data || !data.universal) {
-    wrap.appendChild($("p", { style: { margin: "0", fontSize: "0.85rem", opacity: "0.65" } }, ["Your bio line was not produced for this build yet."]));
-    wrap.setAttribute("data-aios-bio-missing", "1");
-    return wrap;
-  }
-  wrap.appendChild(copyRow("", data.universal));
-  if (CONFIG.bioLine.linkedin && data.linkedin) wrap.appendChild(copyRow("LinkedIn", data.linkedin));
-  return wrap;
-}
-
-// The tease that earns the email: name the reward in enticing plain copy.
+// The tease that earns the email: name the reward in enticing plain copy. The
+// main card (with its reading) is already visible, so the email unlocks the bonus
+// egos.
 function captureTeaseText() {
   const labels = (CONFIG.rewardCards || []).map((rc) => rc.label || fieldLabel(rc.id)).filter(Boolean);
-  const base = "Enter your email to get your full reading";
-  if (!labels.length) return base + ".";
+  if (!labels.length) return "Enter your email to unlock your full result.";
   const joined = labels.length === 1 ? labels[0]
     : labels.slice(0, -1).join(", ") + " and " + labels[labels.length - 1];
-  return base + " plus your " + joined + ".";
+  return "Enter your email to unlock your " + joined + ".";
 }
 
 // ---- result screen (teaser card) + capture ----
@@ -404,24 +396,27 @@ function renderResult(reading, ctx) {
   r.setAttribute("data-screen", "result");
   const box = $("div", { "data-aios-result": "1", style: { maxWidth: "40rem", margin: "0 auto", display: "flex", flexDirection: "column", gap: sp(4) } });
 
-  // (1) HERO: the card + its prominent Share control travel together as one unit.
-  const cardEl = buildMainCard(reading);
-  if (cardEl) {
-    box.appendChild(cardUnit(cardEl, reading, cardHeadline(reading), false));
+  // (1) HERO: the main card, with its Share / Add-to-bio / market affordances
+  // INSIDE the card frame (FIX 2,3,4,6). The card shows the full reading.
+  if (CONFIG.hasCard) {
+    box.appendChild(buildCardElement(reading, { label: CONFIG.productName, mainBio: reading.bio_line }));
   } else {
     // No card (e.g. a diagnostic): the result fields are the teaser.
     box.appendChild(renderFields(reading, CONFIG.resultFields.slice(0, 3), "teaser"));
   }
 
-  // (2) SECOND: the email ask - or, when there is no capture, the full reveal now.
+  // (2) the email ask (unlocks the bonus cards) - or, when there is no capture,
+  // the full reveal now (no card products show the polished reading here).
   if (CONFIG.capture.enabled) {
     box.appendChild(renderCapture(reading, ctx));
-  } else {
+  } else if (!CONFIG.hasCard) {
     box.appendChild(renderReading(reading, pickFields(reading)));
     box.setAttribute("data-aios-full", "1");
+  } else {
+    box.setAttribute("data-aios-full", "1"); // the card IS the full result
   }
 
-  // (3) TERTIARY: the quiet "More from MacLean Market" link (footer-weight).
+  // (3) the quiet page-footer "More from MacLean Market" link.
   const ml = renderMarketLink();
   if (ml) box.appendChild(ml);
 
@@ -445,7 +440,8 @@ function renderCapture(reading, ctx) {
   // The TEASE: name the reward in enticing plain copy - the hook that earns the email.
   wrap.appendChild($("p", { class: "aios-tease", "data-aios-tease": "1" }, [captureTeaseText()]));
   const email = $("input", { type: "email", "data-aios-email": "1", placeholder: "you@example.com", required: "true", style: { padding: sp(3), fontSize: "1rem", border: "1px solid var(--aios-color-border,#ccc)", borderRadius: "var(--aios-radius-md,6px)", boxSizing: "border-box", width: "100%", maxWidth: "100%" } });
-  const btn = $("button", { type: "button", "data-aios-capture-submit": "1", style: { padding: sp(3), border: "0", borderRadius: "var(--aios-radius-md,6px)", background: "var(--aios-color-accent,#2563eb)", color: "var(--aios-color-on-accent,#fff)", cursor: "pointer" } }, ["Unlock my full result"]);
+  const unlockLabel = (CONFIG.rewardCards || []).length ? "Unlock my bonus cards" : "Unlock my full result";
+  const btn = $("button", { type: "button", "data-aios-capture-submit": "1", style: { padding: sp(3), border: "0", borderRadius: "var(--aios-radius-md,6px)", background: "var(--aios-color-accent,#2563eb)", color: "#fff", cursor: "pointer", fontWeight: "700" } }, [unlockLabel]);
   const note = $("p", { "aria-live": "polite", style: { minHeight: "1.2em", fontSize: "0.9rem", opacity: "0.8" } });
   btn.addEventListener("click", async () => {
     const addr = (email.value || "").trim();
@@ -460,23 +456,19 @@ function renderCapture(reading, ctx) {
       const res = await fetch("capture", { method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: addr, first_name: (ctx && ctx.firstName) || "", archetype: archetype, tags: tags }) });
       if (!res.ok) throw new Error("capture failed");
-      // Only AFTER the capture is recorded do we reveal the full reading - as a
-      // polished, DESIGNED section (never the raw field dump). The market link, if
-      // present, stays last.
+      // Only AFTER the capture is recorded do the bonus cards reveal - each a full
+      // card with its OWN in-card Share / Add-to-bio / market affordances. The main
+      // card (already shown) carries the full reading + its own bio, so there is no
+      // separate reading panel or bio section any more.
       const box = wrap.parentNode;
       wrap.remove();
       const mlEl = box.querySelector(".aios-market-wrap");
       const insert = (el) => { if (mlEl) box.insertBefore(el, mlEl); else box.appendChild(el); };
-      // The full reading (polished), then the capture-reward cards (each shareable).
-      insert(renderReading(reading, pickFields(reading)));
       if ((CONFIG.rewardCards || []).length) {
         const rewardWrap = $("div", { "data-aios-rewards": "1", style: { display: "flex", flexDirection: "column", gap: sp(4) } });
         renderRewardCards(reading, rewardWrap);
         insert(rewardWrap);
       }
-      // The copyable bio line (a small self-descriptor for their social profile).
-      const bio = renderBioLine(reading);
-      if (bio) insert(bio);
       box.setAttribute("data-aios-full", "1");
     } catch (e) { btn.disabled = false; note.textContent = "Could not save right now - try again."; }
   });
@@ -499,31 +491,43 @@ function injectResponsiveReset() {
   // Mobile-clean by construction: nothing exceeds the viewport, no horizontal
   // scroll, and reduced-motion is honored (we add no animations, but declare it).
   style.textContent = "html,body{margin:0;max-width:100%;overflow-x:hidden}" +
-    "#aios-app-root{box-sizing:border-box;max-width:100%;padding:var(--aios-space-4,1rem)}" +
+    // FIX 1: a soft, airy LIGHT page - fun + light, so the vivid cards POP. Body
+    // text flips to dark-on-light so nothing washes out. The cards keep their own
+    // gradients + white text (self-contained), untouched.
+    "html,body{background:linear-gradient(165deg,#f4f7ff 0%,#eef0fb 45%,#f6effb 100%);background-attachment:fixed}" +
+    "#aios-app-root{box-sizing:border-box;max-width:100%;padding:var(--aios-space-4,1rem);color:#1b2333}" +
+    "#aios-app-root h1,#aios-app-root h2,#aios-app-root h3,#aios-app-root label,#aios-app-root p,#aios-app-root li,#aios-app-root strong{color:#1b2333}" +
+    "#aios-app-root .aios-tc,#aios-app-root .aios-tc *{color:#fff}" + // cards stay white-on-gradient
+    "#aios-app-root .aios-tc .aios-incard-share{color:#1b2333}" + // the white in-card CTA needs dark text
+    "#aios-app-root input{background:#fff;color:#1b2333}" +
     "#aios-app-root *{max-width:100%;box-sizing:border-box}" +
     "#aios-app-root img{height:auto}" +
-    // Wave-2 growth surfaces. Share is the HERO: a prominent, animated (sheen) CTA.
-    ".aios-share-cta{display:flex;align-items:center;justify-content:center;gap:.5rem;width:100%;padding:.95rem 1rem;border:0;border-radius:13px;font-size:1.05rem;font-weight:800;letter-spacing:.2px;cursor:pointer;color:#fff;background:linear-gradient(135deg,#7c3aed,#2563eb);box-shadow:0 12px 28px -8px rgba(37,99,235,.6);position:relative;overflow:hidden}" +
-    ".aios-share-cta::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 32%,rgba(255,255,255,.4) 50%,transparent 68%);transform:translateX(-120%);animation:aios-sheen 2.8s ease-in-out infinite}" +
-    ".aios-share-cta:hover{filter:brightness(1.07)}" +
-    "@keyframes aios-sheen{0%{transform:translateX(-120%)}55%,100%{transform:translateX(120%)}}" +
-    ".aios-share-cta.sm{width:auto;padding:.5rem .85rem;font-size:.82rem;border-radius:10px;box-shadow:0 6px 16px -6px rgba(37,99,235,.5)}" +
-    ".aios-share-cta.sm::after{animation-duration:3.4s}" +
-    // The polished on-screen full reveal (a designed section, NOT a raw field dump).
-    ".aios-reading{display:flex;flex-direction:column;gap:1rem;margin-top:.3rem;padding:1.15rem 1.2rem;border-radius:14px;background:rgba(127,127,127,.06);border:1px solid rgba(127,127,127,.18)}" +
+    // FIX 2,3,4,6: the affordances INSIDE the card frame (data-no-share). White
+    // text on the card gradient; the Share button is a clear white CTA that pops.
+    ".aios-tc-actions{margin-top:1.15rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.28);display:flex;flex-direction:column;gap:.75rem}" +
+    ".aios-incard-sharerow{display:flex;flex-direction:column;gap:.3rem}" +
+    ".aios-incard-share{width:100%;padding:.8rem 1rem;border:0;border-radius:11px;font-size:1rem;font-weight:800;letter-spacing:.2px;cursor:pointer;color:#1b2333;background:#fff;box-shadow:0 8px 20px -8px rgba(0,0,0,.45)}" +
+    ".aios-incard-share:hover{filter:brightness(.95)}" +
+    ".aios-incard-note{font-size:.74rem;opacity:.85;text-align:center;min-height:.9em;white-space:pre-wrap}" +
+    ".aios-incard-bio{display:flex;flex-direction:column;gap:.28rem}" +
+    ".aios-incard-biolabel{margin:0;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;opacity:.8}" +
+    ".aios-incard-biotext{margin:0;font-size:.92rem;line-height:1.4}" +
+    ".aios-incard-copyrow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}" +
+    ".aios-incard-copy{padding:.32rem .8rem;border-radius:8px;border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.16);color:#fff;font-size:.78rem;font-weight:700;cursor:pointer}" +
+    ".aios-incard-copy:hover{background:rgba(255,255,255,.3)}" +
+    ".aios-incard-copynote{font-size:.72rem;opacity:.85}" +
+    ".aios-incard-market{display:inline-block;font-size:.72rem;opacity:.82;color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.4);align-self:flex-start}" +
+    ".aios-incard-market:hover{opacity:1}" +
+    // The on-screen reading (NO-CARD products only) + the tease + the page-footer market link.
+    ".aios-reading{display:flex;flex-direction:column;gap:1rem;margin-top:.3rem;padding:1.15rem 1.2rem;border-radius:14px;background:rgba(30,40,70,.05);border:1px solid rgba(30,40,70,.12)}" +
     ".aios-reading-label{margin:0 0 .3rem;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;opacity:.6}" +
     ".aios-reading-val{margin:0;font-size:1rem;line-height:1.55;white-space:pre-wrap}" +
     ".aios-reading-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.1rem 0 0;padding:0;list-style:none}" +
-    ".aios-reading-chip{padding:.28rem .7rem;border-radius:999px;font-size:.85rem;background:rgba(127,127,127,.14);border:1px solid rgba(127,127,127,.24)}" +
-    // The tertiary market link + the capture tease.
+    ".aios-reading-chip{padding:.28rem .7rem;border-radius:999px;font-size:.85rem;background:rgba(30,40,70,.08);border:1px solid rgba(30,40,70,.15)}" +
     ".aios-market-wrap{text-align:center;margin-top:.3rem}" +
-    ".aios-market-link{display:inline-block;font-size:.8rem;opacity:.55;text-decoration:none;color:inherit;border-bottom:1px solid transparent}" +
-    ".aios-market-link:hover{opacity:.9;border-bottom-color:currentColor}" +
+    ".aios-market-link{display:inline-block;font-size:.8rem;opacity:.6;text-decoration:none;color:inherit;border-bottom:1px solid transparent}" +
+    ".aios-market-link:hover{opacity:.95;border-bottom-color:currentColor}" +
     ".aios-tease{margin:0 0 .55rem;font-size:.98rem;font-weight:600;line-height:1.45}" +
-    ".aios-copy-btn{padding:.45rem .9rem;border-radius:9px;border:1px solid rgba(127,127,127,.35);background:rgba(127,127,127,.08);font-size:.85rem;font-weight:600;cursor:pointer;color:inherit}" +
-    ".aios-copy-btn:hover{background:rgba(127,127,127,.16)}" +
-    // A shareable card + its share control travel together as one unit.
-    ".aios-cardunit{display:flex;flex-direction:column;gap:.6rem}" +
     "@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}";
   document.head.appendChild(style);
 }
