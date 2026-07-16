@@ -5,11 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What strength feels most like 'you' right now?",
-    "What shadow trait do you recognize in yourself?",
-    "What's a vivid metaphor for how you show up?",
-    "How do you want to be seen by the people around you?",
-    "What single word feels like your truest self?"
+    "What's your most authentic strength?",
+    "What shadow trait do you acknowledge?",
+    "What's a vivid metaphor for you?",
+    "What word describes your current essence?",
+    "What quality are you growing into?"
   ],
   "askName": true,
   "hasCard": true,
