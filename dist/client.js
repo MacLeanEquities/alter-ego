@@ -324,11 +324,11 @@
   // client.js
   var CONFIG = {
     "questions": [
-      "What's the one word that feels most like your true self?",
-      "What everyday object feels most like your energy?",
-      "What do you do effortlessly that others notice?",
-      "What's a habit you're honest about changing?",
-      "What's the core truth you'd want your reading to reflect?"
+      "What's a vivid metaphor for your current energy?",
+      "What strength are you using right now?",
+      "What shadow are you noticing in yourself?",
+      "What word describes your ideal self?",
+      "What phrase do you say to yourself most often?"
     ],
     "askName": true,
     "hasCard": true,
