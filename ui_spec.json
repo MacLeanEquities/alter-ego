@@ -1,11 +1,11 @@
 {
   "contract": "ui_spec",
   "schema_version": "1.0.0",
-  "ui_spec_id": "1fc3205b-e068-475f-9ae8-34ee85deae4b",
-  "blueprint_id": "83743f41-ac22-4f90-9437-57d00a436d66",
+  "ui_spec_id": "0b664066-57c3-44ab-8a96-48b1b34071dd",
+  "blueprint_id": "7f808c81-974f-4a98-afc8-2e3fae4d1740",
   "slug": "alter-ego",
   "is_test": false,
-  "created_at": "2026-07-16T02:20:51.137Z",
+  "created_at": "2026-07-16T03:13:37.187Z",
   "theme": {
     "kit": "ui-primitives",
     "mode": "system"
@@ -68,7 +68,7 @@
             ],
             "bio_line": {
               "enabled": true,
-              "linkedin": true
+              "linkedin": false
             }
           }
         }
@@ -83,7 +83,7 @@
         {
           "type": "prose",
           "props": {
-            "text": "FREE, forever. Paste nothing — just answer 5 quick, revealing questions. In\nunder a minute you see your Alter Ego card (your coined archetype, a one-line\nmetaphor, a few traits, a motto). Enter your email and, right on screen, you get\nyour full reading PLUS two more cards worth posting: your Friend Group Ego (who\nyou are to the people around you) and your Shadow Ego (the person you almost were).\nThe email is the only ask, and it is the delivery of real extra value, not a gate.\nThere is NO paid tier now (deliberate — this is an audience play). The only CTA is\nsoft: \"built by Scott MacLean, who runs a one-person company of AI agents — see\nwhat else the machine builds\" -> macleanmarket.com + an optional subscribe.\nDesigned from day one to also be GIFTABLE as a free add-on bonus that can bolt\nonto any future MacLean offer."
+            "text": "Alter Ego is a free, 60-second mirror. Answer five quick questions and meet your archetype: a coined name, a vivid metaphor, your real strengths, an honest shadow, and a short reading that actually sounds like you. Enter your email and two more cards are yours: your Friend Group Ego, who you are to the people around you, and your Shadow Ego, the person you almost were. Share any card with a tap, or drop your bio straight into your profile. Free forever, no account, just you."
           }
         }
       ]

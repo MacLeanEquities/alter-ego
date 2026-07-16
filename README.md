@@ -2,7 +2,7 @@
 
 
 
-Scaffolded by AI OS Production v1 from signed blueprint `83743f41-ac22-4f90-9437-57d00a436d66`
+Scaffolded by AI OS Production v1 from signed blueprint `7f808c81-974f-4a98-afc8-2e3fae4d1740`
 (template generic-tool-content/v2).
 
 ## Build

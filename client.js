@@ -5,11 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What metaphor describes your current self?",
-    "What's your motto?",
-    "What's one trait that defines you?",
-    "How do your closest friends see you?",
-    "What side of yourself have you hidden?"
+    "What strength feels most like 'you' right now?",
+    "What shadow trait do you recognize in yourself?",
+    "What's a vivid metaphor for how you show up?",
+    "How do you want to be seen by the people around you?",
+    "What single word feels like your truest self?"
   ],
   "askName": true,
   "hasCard": true,
@@ -52,7 +52,7 @@ const CONFIG = {
   ],
   "bioLine": {
     "enabled": true,
-    "linkedin": true
+    "linkedin": false
   }
 };
 const RENDER_CARD = renderCard;
