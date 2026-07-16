@@ -324,11 +324,11 @@
   // client.js
   var CONFIG = {
     "questions": [
-      "What shadow trait do you carry quietly?",
-      "What vivid metaphor describes your true self?",
-      "What strength do you lean on when things get hard?",
-      "What phrase feels like your everyday reality?",
-      "What name would fit your true self?"
+      "What's the one word that feels most like your true self?",
+      "What everyday object feels most like your energy?",
+      "What do you do effortlessly that others notice?",
+      "What's a habit you're honest about changing?",
+      "What's the core truth you'd want your reading to reflect?"
     ],
     "askName": true,
     "hasCard": true,
