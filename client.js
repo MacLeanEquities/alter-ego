@@ -5,11 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What strength does your archetype highlight?",
-    "What shadow do you acknowledge?",
-    "What metaphor describes your life?",
-    "How do friends see you?",
-    "What phrase describes you right now?"
+    "What shadow trait do you carry quietly?",
+    "What vivid metaphor describes your true self?",
+    "What strength do you lean on when things get hard?",
+    "What phrase feels like your everyday reality?",
+    "What name would fit your true self?"
   ],
   "askName": true,
   "hasCard": true,
