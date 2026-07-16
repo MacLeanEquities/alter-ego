@@ -5,11 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What's your most authentic strength?",
-    "What shadow trait do you acknowledge?",
-    "What's a vivid metaphor for you?",
-    "What word describes your current essence?",
-    "What quality are you growing into?"
+    "What strength do you rely on without thinking?",
+    "What shadow trait do you admit to?",
+    "What natural element best describes your energy?",
+    "What's one change you're most proud of?",
+    "What word best describes your current self?"
   ],
   "askName": true,
   "hasCard": true,
