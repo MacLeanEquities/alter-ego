@@ -1,90 +1,23 @@
 export function renderCard(reading, variant = 0) {
-  // Templated CSS card with dynamic text over fixed background
-  const backgroundVariants = [
-    "linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c)",
-    "linear-gradient(135deg, #2c3e50, #4a6491, #2c3e50)",
-    "linear-gradient(135deg, #2c5282, #4a6491, #2c5282)",
-    "linear-gradient(135deg, #1e3a8a, #4a5568, #1e3a8a)"
-  ];
-  
-  const background = backgroundVariants[variant % backgroundVariants.length];
-  
-  return `
-    <div style="
-      background: ${background};
-      color: white;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      padding: 2rem;
-      border-radius: 16px;
-      max-width: 600px;
-      margin: 0 auto;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-    ">
-      <div style="
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none"><path d="M0 0L100 100M100 0L0 100" stroke="rgba(255,255,255,0.05)" stroke-width="2"/></svg>');
-        opacity: 0.1;
-      "></div>
-      
-      <h1 style="
-        font-size: 2.2rem;
-        margin: 0 0 0.5rem;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        letter-spacing: 0.5px;
-      ">${reading.archetype_name}</h1>
-      
-      <p style="
-        font-size: 1.2rem;
-        margin: 0 0 1.5rem;
-        font-style: italic;
-        line-height: 1.4;
-      ">${reading.one_line_essence}</p>
-      
-      <div style="
-        background: rgba(0,0,0,0.2);
-        padding: 1.2rem;
-        border-radius: 12px;
-        margin: 1.5rem 0;
-        font-size: 1.1rem;
-      ">
-        <p style="margin: 0.5rem 0;">${reading.visual_metaphor}</p>
-      </div>
-      
-      <div style="
-        margin: 1.5rem 0;
-        font-size: 1.1rem;
-      ">
-        <p style="margin: 0.5rem 0;"><strong>Strengths:</strong> ${reading.strengths.join(', ')}</p>
-        <p style="margin: 0.5rem 0;"><strong>Shadow Traits:</strong> ${reading.shadow_traits.join(', ')}</p>
-      </div>
-      
-      <div style="
-        background: rgba(255,255,255,0.15);
-        padding: 1rem;
-        border-radius: 8px;
-        margin: 1.5rem 0;
-        font-size: 1.1rem;
-      ">
-        <p style="margin: 0.5rem 0;"><strong>Motto:</strong> ${reading.motto_chapter_themeword}</p>
-        <p style="margin: 0.5rem 0;"><strong>Narrative:</strong> ${reading.narrative}</p>
-      </div>
-      
-      <div style="
-        position: absolute;
-        bottom: 1rem;
-        right: 1rem;
-        font-size: 0.8rem;
-        opacity: 0.7;
-      ">
-        Alter Ego Card
-      </div>
+    return `
+    <div style="background: linear-gradient(135deg, #e0f7fa, #bbdefb); padding: 2rem; border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #2d3748; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; color: #1a202c; text-align: center;">${reading.archetype_name}</h1>
+        <p style="font-size: 1.25rem; margin-bottom: 1rem; color: #4a5568; text-align: center;">${reading.one_line_essence}</p>
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <p style="font-style: italic; color: #718096; margin-bottom: 0.5rem; text-align: center;">${reading.visual_metaphor}</p>
+            <h2 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #2d3748; text-align: center;">Strengths</h2>
+            <ul style="padding-left: 1.5rem; margin: 0; list-style-type: none; text-align: center;">
+                ${reading.strengths.map(s => `<li style="margin-bottom: 0.5rem; display: inline-block; margin-right: 0.5rem;">${s}</li>`).join('')}
+            </ul>
+            <h2 style="font-size: 1.25rem; margin-top: 1rem; margin-bottom: 0.5rem; color: #2d3748; text-align: center;">Shadow Traits</h2>
+            <ul style="padding-left: 1.5rem; margin: 0; list-style-type: none; text-align: center;">
+                ${reading.shadow_traits.map(s => `<li style="margin-bottom: 0.5rem; display: inline-block; margin-right: 0.5rem;">${s}</li>`).join('')}
+            </ul>
+        </div>
+        <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <p style="font-weight: 700; margin-bottom: 0.5rem; color: #2d3748; text-align: center;">${reading.motto_chapter_themeword}</p>
+            <p style="line-height: 1.6; color: #4a5568; text-align: center;">${reading.narrative}</p>
+        </div>
     </div>
-  `;
+    `;
 }
