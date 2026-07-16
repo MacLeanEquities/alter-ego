@@ -1,141 +1,185 @@
 (() => {
   // capability.mjs
-  function runCapability(input) {
-    const archetypes = [
-      {
-        archetype_name: "The Curious Bridge",
-        one_line_essence: "You're the one who connects the dots between the unexpected.",
-        visual_metaphor: "A bridge made of glowing, interconnected puzzle pieces",
-        strengths: ["Curiosity", "Pattern Recognition", "Empathy"],
-        shadow_traits: ["Overthinking", "Avoiding Conflict"],
-        motto_chapter_themeword: "Connect",
-        narrative: "You see the world as a web of connections. Your curiosity drives you to find the hidden links between ideas, people, and experiences. You thrive when you can bring together disparate elements into a cohesive whole, but sometimes you get lost in the details, overanalyzing every possible connection."
-      },
-      {
-        archetype_name: "The Quiet Innovator",
-        one_line_essence: "You're the one who turns small ideas into meaningful change.",
-        visual_metaphor: "A single seedling growing through a crack in concrete",
-        strengths: ["Patience", "Attention to Detail", "Resilience"],
-        shadow_traits: ["Self-Doubt", "Hesitation to Share"],
-        motto_chapter_themeword: "Grow",
-        narrative: "You work steadily, often behind the scenes, to nurture small ideas until they blossom. You find joy in the quiet process of creation and the tangible results of your efforts. However, you sometimes second-guess your ideas and hold back from sharing them until they feel perfect."
-      },
-      {
-        archetype_name: "The Patient Listener",
-        one_line_essence: "You're the one who makes space for others to be heard.",
-        visual_metaphor: "A calm pond reflecting a clear sky",
-        strengths: ["Active Listening", "Patience", "Emotional Intelligence"],
-        shadow_traits: ["Holding Back", "Taking on Too Much"],
-        motto_chapter_themeword: "Listen",
-        narrative: "You create a safe space for others to share their thoughts and feelings. Your patience and emotional intelligence help people feel understood, but you sometimes take on too much responsibility for others' emotions and hold back your own voice."
-      },
-      {
-        archetype_name: "The Creative Catalyst",
-        one_line_essence: "You're the one who sparks new ideas in unexpected places.",
-        visual_metaphor: "A spark igniting a cluster of glowing, interconnected stars",
-        strengths: ["Creativity", "Energy", "Openness"],
-        shadow_traits: ["Distractibility", "Overcommitting"],
-        motto_chapter_themeword: "Spark",
-        narrative: "You bring energy and fresh perspectives to any group, turning ordinary moments into opportunities for innovation. Your creativity is contagious, but you sometimes get distracted by too many ideas and overcommit to projects before they're fully formed."
-      },
-      {
-        archetype_name: "The Steady Anchor",
-        one_line_essence: "You're the one who keeps things grounded when the world feels chaotic.",
-        visual_metaphor: "A lighthouse standing firm against stormy waves",
-        strengths: ["Reliability", "Stability", "Practicality"],
-        shadow_traits: ["Rigidity", "Avoiding Change"],
-        motto_chapter_themeword: "Anchor",
-        narrative: "You provide a sense of stability and security in uncertain times. Your practical approach helps others navigate challenges, but you sometimes resist change and hold onto old ways of doing things."
-      },
-      {
-        archetype_name: "The Thoughtful Bridge",
-        one_line_essence: "You're the one who builds understanding between different perspectives.",
-        visual_metaphor: "A bridge made of woven threads of different colors",
-        strengths: ["Empathy", "Communication", "Adaptability"],
-        shadow_traits: ["People-Pleasing", "Difficulty Setting Boundaries"],
-        motto_chapter_themeword: "Bridge",
-        narrative: "You excel at finding common ground and facilitating conversations between people with different viewpoints. Your empathy helps you navigate complex social dynamics, but you sometimes prioritize others' needs over your own and struggle to set boundaries."
-      },
-      {
-        archetype_name: "The Quiet Builder",
-        one_line_essence: "You're the one who creates lasting value through steady effort.",
-        visual_metaphor: "A stone wall being built one stone at a time",
-        strengths: ["Diligence", "Consistency", "Integrity"],
-        shadow_traits: ["Perfectionism", "Withholding Feedback"],
-        motto_chapter_themeword: "Build",
-        narrative: "You take pride in creating things that endure, working steadily without seeking attention. Your consistency and integrity are your hallmarks, but you sometimes get stuck in perfectionism and hesitate to share your work until it feels flawless."
-      },
-      {
-        archetype_name: "The Joyful Explorer",
-        one_line_essence: "You're the one who finds wonder in the everyday journey.",
-        visual_metaphor: "A path through a field of wildflowers, leading to a distant mountain",
-        strengths: ["Curiosity", "Optimism", "Flexibility"],
-        shadow_traits: ["Impulsivity", "Avoiding Deep Commitments"],
-        motto_chapter_themeword: "Explore",
-        narrative: "You approach life with a sense of wonder and a desire to experience new things. Your optimism and flexibility make you adaptable, but you sometimes act on impulse and avoid making long-term commitments."
-      },
-      {
-        archetype_name: "The Insightful Guide",
-        one_line_essence: "You're the one who helps others see their own potential.",
-        visual_metaphor: "A compass pointing to a clear path through a misty forest",
-        strengths: ["Clarity", "Encouragement", "Perceptiveness"],
-        shadow_traits: ["Over-Explaining", "Assuming Others See What You See"],
-        motto_chapter_themeword: "Guide",
-        narrative: "You have a gift for helping others see their own strengths and possibilities. Your clarity and encouragement empower people to grow, but you sometimes over-explain and assume others share your perspective."
-      },
-      {
-        archetype_name: "The Harmonious Mediator",
-        one_line_essence: "You're the one who turns conflict into collaboration.",
-        visual_metaphor: "A circle of hands holding together, with a rainbow in the background",
-        strengths: ["Conflict Resolution", "Collaboration", "Tact"],
-        shadow_traits: ["Avoiding Directness", "Taking on Others' Problems"],
-        motto_chapter_themeword: "Harmony",
-        narrative: "You excel at resolving disagreements and fostering teamwork. Your tact and collaborative spirit help groups move forward, but you sometimes avoid direct confrontation and take on others' problems as your own."
-      }
-    ];
-    const bioLines = [
-      { universal: "I connect the dots between the unexpected.", linkedin: "I thrive on finding the hidden links between ideas, people, and experiences, bringing together disparate elements into a cohesive whole." },
-      { universal: "I turn small ideas into meaningful change.", linkedin: "I nurture small ideas until they blossom, finding joy in the quiet process of creation and tangible results." },
-      { universal: "I make space for others to be heard.", linkedin: "I create safe spaces for sharing through patience and emotional intelligence, helping people feel understood." },
-      { universal: "I spark new ideas in unexpected places.", linkedin: "I bring energy and fresh perspectives to groups, turning ordinary moments into innovation opportunities." },
-      { universal: "I keep things grounded when the world feels chaotic.", linkedin: "I provide stability and security through practical approaches that help others navigate challenges." },
-      { universal: "I build understanding between different perspectives.", linkedin: "I excel at finding common ground and facilitating conversations between diverse viewpoints." },
-      { universal: "I create lasting value through steady effort.", linkedin: "I take pride in enduring creations built through consistent, integrity-driven work." },
-      { universal: "I find wonder in the everyday journey.", linkedin: "I approach life with curiosity and optimism, embracing new experiences with flexibility." },
-      { universal: "I help others see their own potential.", linkedin: "I empower growth through clarity and encouragement, helping people recognize their strengths." },
-      { universal: "I turn conflict into collaboration.", linkedin: "I resolve disagreements through tact and collaboration, fostering teamwork and moving groups forward." }
-    ];
-    function hash(str) {
-      let h = 0;
-      for (let i = 0; i < str.length; i++) {
-        h = (h << 5) - h + str.charCodeAt(i);
-        h = h & h;
-      }
-      return h;
+  var mainArchetypes = [
+    {
+      archetype_name: "The Bridge Builder",
+      one_line_essence: "You're the one who connects the dots between people and ideas.",
+      visual_metaphor: "A stone bridge over a rushing river, with footprints on both sides",
+      strengths: ["Empathetic", "Patient", "Resourceful"],
+      shadow_traits: ["Overly cautious", "Avoids conflict"],
+      motto_chapter_themeword: "Connect",
+      narrative: "You see the gaps in the conversation and fill them with understanding. Your strength is in making others feel heard, but sometimes you hold back to keep the peace.",
+      keywords: ["bridge", "connect", "build", "together"]
+    },
+    {
+      archetype_name: "The Quiet Listener",
+      one_line_essence: "You're the one who hears the unspoken and responds with gentle insight.",
+      visual_metaphor: "A calm pond reflecting the moonlight, with ripples from a single stone",
+      strengths: ["Attentive", "Thoughtful", "Supportive"],
+      shadow_traits: ["Too quiet", "Holds back too much"],
+      motto_chapter_themeword: "Listen",
+      narrative: "You notice the subtle shifts in tone and respond with just the right words. Your quiet presence makes others feel safe, but you sometimes miss opportunities to speak up.",
+      keywords: ["listen", "quiet", "hear", "reflect"]
+    },
+    {
+      archetype_name: "The Idea Catalyst",
+      one_line_essence: "You're the one who sparks new thoughts and turns 'what if' into 'let's do it'.",
+      visual_metaphor: "A spark igniting a trail of fireflies in the night",
+      strengths: ["Innovative", "Energetic", "Encouraging"],
+      shadow_traits: ["Overwhelms with ideas", "Fails to follow through"],
+      motto_chapter_themeword: "Spark",
+      narrative: "You're the one who brings fresh perspectives to the table. Your energy is contagious, but you sometimes leave others scrambling to catch up.",
+      keywords: ["spark", "idea", "catalyst", "innovate"]
     }
-    const inputKey = JSON.stringify(input);
-    const index = Math.abs(hash(inputKey)) % archetypes.length;
-    const main = archetypes[index];
-    const friendGroup = archetypes[(index + 1) % archetypes.length];
-    const shadow = archetypes[(index + 2) % archetypes.length];
-    return {
-      ...main,
-      reward_cards: {
-        friend_group_ego: friendGroup,
-        shadow_ego: shadow
+  ];
+  var friendGroupArchetypes = [
+    {
+      archetype_name: "The Connector",
+      one_line_essence: "You're the one who brings people together and makes the group feel like home.",
+      visual_metaphor: "A circle of friends sharing a campfire under a starry sky",
+      strengths: ["Warm", "Inclusive", "Organized"],
+      shadow_traits: ["Overly focused on group harmony", "Ignores individual needs"],
+      motto_chapter_themeword: "Group",
+      narrative: "You're the glue that holds the group together, always making sure everyone feels included. Your warmth makes gatherings feel effortless, but you might overlook someone who needs a moment alone.",
+      keywords: ["connect", "group", "home", "glue"]
+    },
+    {
+      archetype_name: "The Storyteller",
+      one_line_essence: "You're the one who turns ordinary moments into shared memories.",
+      visual_metaphor: "A group of friends laughing around a table, with a storybook open in the center",
+      strengths: ["Engaging", "Creative", "Memory-maker"],
+      shadow_traits: ["Tells the same stories too often", "Overlooks the present moment"],
+      motto_chapter_themeword: "Story",
+      narrative: "You have a way of making every gathering feel special with your tales. Your stories create a sense of belonging, but you might get stuck in the past.",
+      keywords: ["story", "memory", "laugh", "gather"]
+    },
+    {
+      archetype_name: "The Energizer",
+      one_line_essence: "You're the one who keeps the group moving and laughing through the tough times.",
+      visual_metaphor: "A group of friends dancing in the rain, with umbrellas held high",
+      strengths: ["Upbeat", "Resilient", "Fun"],
+      shadow_traits: ["Forces fun when it's not needed", "Ignores serious moments"],
+      motto_chapter_themeword: "Energize",
+      narrative: "You're the one who turns a dull evening into an adventure. Your energy lifts everyone, but you might not notice when someone needs a quiet moment.",
+      keywords: ["energize", "fun", "dance", "laugh"]
+    }
+  ];
+  var shadowArchetypes = [
+    {
+      archetype_name: "The Hidden Weaver",
+      one_line_essence: "You're the one who quietly shapes the group's dynamics from the background.",
+      visual_metaphor: "A spider weaving a web in the shadows of a garden",
+      strengths: ["Subtle", "Perceptive", "Patient"],
+      shadow_traits: ["Too passive", "Fears being noticed"],
+      motto_chapter_themeword: "Weave",
+      narrative: "You're the one who notices the unspoken tensions and gently guides the group. Your quiet influence is powerful, but you might hold back from speaking up when it's needed.",
+      keywords: ["weave", "hidden", "quiet", "background"]
+    },
+    {
+      archetype_name: "The Reflective Observer",
+      one_line_essence: "You're the one who sees the deeper meaning in every interaction.",
+      visual_metaphor: "A person sitting by a window, watching the world go by",
+      strengths: ["Insightful", "Calm", "Introspective"],
+      shadow_traits: ["Too detached", "Struggles to act"],
+      motto_chapter_themeword: "Observe",
+      narrative: "You're the one who understands the unspoken emotions in the room. Your insights are valuable, but you might not step in when action is required.",
+      keywords: ["observe", "reflect", "deep", "understand"]
+    },
+    {
+      archetype_name: "The Unspoken Guide",
+      one_line_essence: "You're the one who leads without being the loudest voice.",
+      visual_metaphor: "A lighthouse guiding ships through fog",
+      strengths: ["Guiding", "Steady", "Trustworthy"],
+      shadow_traits: ["Too reserved", "Waits for others to lead"],
+      motto_chapter_themeword: "Guide",
+      narrative: "You're the one who provides steady direction without drawing attention. Your calm presence is a comfort, but you might not speak up when you have a strong opinion.",
+      keywords: ["guide", "lighthouse", "steady", "trust"]
+    }
+  ];
+  var bioLineMap = {
+    "The Bridge Builder": {
+      universal: "I connect people and ideas, building bridges where there were gaps. I thrive on understanding the unspoken.",
+      linkedin: "I'm the one who notices the silences in conversations and fills them with understanding. I build connections that last, turning strangers into collaborators."
+    },
+    "The Quiet Listener": {
+      universal: "I hear the unspoken and respond with gentle insight. I make others feel safe to share.",
+      linkedin: "I listen deeply to understand, not just to respond. My quiet presence creates a space where people feel heard and valued."
+    },
+    "The Idea Catalyst": {
+      universal: "I spark new thoughts and turn 'what if' into 'let's do it'. I thrive on fresh perspectives.",
+      linkedin: "I'm the one who brings innovative ideas to the table and turns them into action. My energy fuels collaboration and creativity."
+    }
+  };
+  function selectByIndex(library, input) {
+    const len = input.answers[0].length;
+    const index = len % library.length;
+    return library[index];
+  }
+  function selectDistinct(library, input, excludedNames) {
+    const len = input.answers[0].length;
+    const baseIndex = len % library.length;
+    let index = baseIndex;
+    for (let i = 0; i < library.length; i++) {
+      const candidate = library[index];
+      if (!excludedNames.includes(candidate.archetype_name)) {
+        return candidate;
+      }
+      index = (index + 1) % library.length;
+    }
+    return library[0];
+  }
+  function runCapability(input) {
+    const mainArchetype = selectByIndex(mainArchetypes, input);
+    const friendGroupArchetype = selectDistinct(friendGroupArchetypes, input, [mainArchetype.archetype_name]);
+    const shadowArchetype = selectDistinct(shadowArchetypes, input, [
+      mainArchetype.archetype_name,
+      friendGroupArchetype.archetype_name
+    ]);
+    const result = {
+      archetype_name: mainArchetype.archetype_name,
+      one_line_essence: mainArchetype.one_line_essence,
+      visual_metaphor: mainArchetype.visual_metaphor,
+      strengths: mainArchetype.strengths,
+      shadow_traits: mainArchetype.shadow_traits,
+      motto_chapter_themeword: mainArchetype.motto_chapter_themeword,
+      narrative: mainArchetype.narrative
+    };
+    const reward_cards = {
+      friend_group_ego: {
+        archetype_name: friendGroupArchetype.archetype_name,
+        one_line_essence: friendGroupArchetype.one_line_essence,
+        visual_metaphor: friendGroupArchetype.visual_metaphor,
+        strengths: friendGroupArchetype.strengths,
+        shadow_traits: friendGroupArchetype.shadow_traits,
+        motto_chapter_themeword: friendGroupArchetype.motto_chapter_themeword,
+        narrative: friendGroupArchetype.narrative
       },
-      bio_line: bioLines[index]
+      shadow_ego: {
+        archetype_name: shadowArchetype.archetype_name,
+        one_line_essence: shadowArchetype.one_line_essence,
+        visual_metaphor: shadowArchetype.visual_metaphor,
+        strengths: shadowArchetype.strengths,
+        shadow_traits: shadowArchetype.shadow_traits,
+        motto_chapter_themeword: shadowArchetype.motto_chapter_themeword,
+        narrative: shadowArchetype.narrative
+      }
+    };
+    const bio_line = bioLineMap[mainArchetype.archetype_name];
+    return {
+      ...result,
+      reward_cards,
+      bio_line
     };
   }
 
   // client.js
   var CONFIG = {
     "questions": [
-      "What's the one thing you're most proud to be known for?",
-      "When you feel completely at ease, what do you do?",
-      "What's a quality you have that feels like a superpower?",
-      "What's the most unexpected strength about you?",
-      "What's the first thing people notice about you?"
+      "What metaphor describes your current self?",
+      "What's your motto?",
+      "What's one trait that defines you?",
+      "How do your closest friends see you?",
+      "What side of yourself have you hidden?"
     ],
     "askName": true,
     "hasCard": true,
@@ -357,6 +401,21 @@
       return "failed";
     }
   }
+  function shareParts(reading, title) {
+    const head = title || cardHeadline(reading);
+    const ess = cardEssence(reading);
+    const text = ess ? head + " \u2014 " + ess : head;
+    const url = CONFIG.share && CONFIG.share.url ? CONFIG.share.url : "";
+    return { text, url };
+  }
+  function xIntentUrl(text, url) {
+    let u = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text || "");
+    if (url) u += "&url=" + encodeURIComponent(url);
+    return u;
+  }
+  function linkedInIntentUrl(url) {
+    return "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(url || "");
+  }
   function renderReading(reading, fields) {
     const wrap = $("div", { "data-aios-fields": "full", "data-aios-reading": "1", class: "aios-reading" });
     for (const f of fields) {
@@ -414,17 +473,37 @@
     opts = opts || {};
     const bar = $("div", { class: "aios-tc-actions", "data-no-share": "1" });
     const label = opts.label || CONFIG.productName || "card";
-    const btn = $("button", { type: "button", "data-aios-share-btn": "1", class: "aios-incard-share" }, ["Share your " + label]);
     const note = $("span", { "aria-live": "polite", class: "aios-incard-note" });
+    const btn = $("button", { type: "button", "data-aios-share-btn": "1", "data-aios-share-copy": "1", class: "aios-incard-share" }, ["Share your " + label]);
     btn.addEventListener("click", async () => {
       const cap = shareCaption(reading, cardHeadline(reading));
-      const r = await doShare(cap);
-      note.textContent = r === "copied" ? "Caption copied." : r === "shared" ? "Shared!" : r === "cancelled" ? "" : cap;
+      try {
+        await navigator.clipboard.writeText(cap);
+        note.textContent = "Copied - paste it into your post.";
+      } catch (e) {
+        note.textContent = "Copy this: " + cap;
+      }
     });
+    const parts = shareParts(reading, cardHeadline(reading));
+    const xLink = $("a", { class: "aios-incard-intent", "data-aios-share-x": "1", href: xIntentUrl(parts.text, parts.url), target: "_blank", rel: "noreferrer" }, ["Share to X"]);
+    const liLink = $("a", { class: "aios-incard-intent", "data-aios-share-linkedin": "1", href: linkedInIntentUrl(parts.url || parts.text), target: "_blank", rel: "noreferrer" }, ["Share to LinkedIn"]);
+    const intents = $("div", { class: "aios-incard-intents" });
+    intents.appendChild(xLink);
+    intents.appendChild(liLink);
+    if (typeof navigator !== "undefined" && navigator.share) {
+      const nativeBtn = $("button", { type: "button", "data-aios-share-native": "1", class: "aios-incard-intent" }, ["Share\u2026"]);
+      nativeBtn.addEventListener("click", async () => {
+        const cap = shareCaption(reading, cardHeadline(reading));
+        const r = await doShare(cap);
+        note.textContent = r === "shared" ? "Shared!" : r === "copied" ? "Copied - paste it into your post." : r === "cancelled" ? "" : cap;
+      });
+      intents.appendChild(nativeBtn);
+    }
     const shareRow = $("div", { class: "aios-incard-sharerow" });
     shareRow.appendChild(btn);
-    shareRow.appendChild(note);
+    shareRow.appendChild(intents);
     bar.appendChild(shareRow);
+    bar.appendChild(note);
     const bio = perCardBio(reading, opts);
     if (bio && bio.universal) {
       bar.appendChild(inCardBioRow("Add this to any bio", bio.universal));
@@ -476,7 +555,7 @@
   }
   function sanitizeBio(s) {
     var t = String(s || "").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}\uFE0F]/gu, "").replace(/\s+/g, " ").trim();
-    if (t.length > 150) t = t.slice(0, 147).replace(/\s+\S*$/, "") + "\u2026";
+    if (t.length > 280) t = t.slice(0, 277).replace(/\s+\S*$/, "") + "\u2026";
     return t;
   }
   function bioLineData(reading) {
@@ -581,7 +660,7 @@
   }
   function injectResponsiveReset() {
     const style = document.createElement("style");
-    style.textContent = "html,body{margin:0;max-width:100%;overflow-x:hidden}body{color:#1b2333}#aios-app-root{box-sizing:border-box;max-width:100%;padding:var(--aios-space-4,1rem);color:#1b2333}#aios-app-root h1,#aios-app-root h2,#aios-app-root h3,#aios-app-root label,#aios-app-root p,#aios-app-root li,#aios-app-root strong,#aios-app-root span{color:#1b2333}#aios-app-root .aios-tc,#aios-app-root .aios-tc *{color:#fff}#aios-app-root .aios-tc .aios-incard-share{color:#1b2333}#aios-app-root *{max-width:100%;box-sizing:border-box}#aios-app-root img{height:auto}.aios-q{display:flex;flex-direction:column;gap:.45rem}.aios-q-text{font-size:1.15rem;font-weight:700;line-height:1.35;color:#141b2b}.aios-input{padding:.85rem 1rem;font-size:1rem;border:1.5px solid #cfd6e6;border-radius:12px;background:#fff;color:#141b2b;box-sizing:border-box;width:100%;max-width:100%;transition:border-color .15s,box-shadow .15s}.aios-input::placeholder{color:#9aa4b8}.aios-input:focus{outline:none;border-color:#6a8bff;box-shadow:0 0 0 4px rgba(106,139,255,.18)}.aios-submit{margin-top:.4rem;padding:.95rem 1.4rem;font-size:1.05rem;font-weight:800;letter-spacing:.2px;border:0;border-radius:12px;color:#fff;background:linear-gradient(135deg,#7c3aed,#2563eb);cursor:pointer;box-shadow:0 12px 26px -10px rgba(37,99,235,.6)}.aios-submit:hover{filter:brightness(1.06)}.aios-tc-actions{margin-top:1.15rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.28);display:flex;flex-direction:column;gap:.75rem}.aios-incard-sharerow{display:flex;flex-direction:column;gap:.3rem}.aios-incard-share{width:100%;padding:.8rem 1rem;border:0;border-radius:11px;font-size:1rem;font-weight:800;letter-spacing:.2px;cursor:pointer;color:#1b2333;background:#fff;box-shadow:0 8px 20px -8px rgba(0,0,0,.45)}.aios-incard-share:hover{filter:brightness(.95)}.aios-incard-note{font-size:.74rem;opacity:.85;text-align:center;min-height:.9em;white-space:pre-wrap}.aios-incard-bio{display:flex;flex-direction:column;gap:.28rem}.aios-incard-biolabel{margin:0;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;opacity:.8}.aios-incard-biotext{margin:0;font-size:.92rem;line-height:1.4}.aios-incard-copyrow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}.aios-incard-copy{padding:.32rem .8rem;border-radius:8px;border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.16);color:#fff;font-size:.78rem;font-weight:700;cursor:pointer}.aios-incard-copy:hover{background:rgba(255,255,255,.3)}.aios-incard-copynote{font-size:.72rem;opacity:.85}.aios-incard-market{display:inline-block;font-size:.72rem;opacity:.82;color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.4);align-self:flex-start}.aios-incard-market:hover{opacity:1}.aios-reading{display:flex;flex-direction:column;gap:1rem;margin-top:.3rem;padding:1.15rem 1.2rem;border-radius:14px;background:rgba(30,40,70,.05);border:1px solid rgba(30,40,70,.12)}.aios-reading-label{margin:0 0 .3rem;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;opacity:.6}.aios-reading-val{margin:0;font-size:1rem;line-height:1.55;white-space:pre-wrap}.aios-reading-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.1rem 0 0;padding:0;list-style:none}.aios-reading-chip{padding:.28rem .7rem;border-radius:999px;font-size:.85rem;background:rgba(30,40,70,.08);border:1px solid rgba(30,40,70,.15)}.aios-market-wrap{text-align:center;margin-top:.3rem}.aios-market-link{display:inline-block;font-size:.8rem;opacity:.6;text-decoration:none;color:inherit;border-bottom:1px solid transparent}.aios-market-link:hover{opacity:.95;border-bottom-color:currentColor}.aios-tease{margin:0 0 .55rem;font-size:.98rem;font-weight:600;line-height:1.45}@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}";
+    style.textContent = "html,body{margin:0;max-width:100%;overflow-x:hidden}body{color:#1b2333}#aios-app-root{box-sizing:border-box;max-width:100%;padding:var(--aios-space-4,1rem);color:#1b2333}#aios-app-root h1,#aios-app-root h2,#aios-app-root h3,#aios-app-root label,#aios-app-root p,#aios-app-root li,#aios-app-root strong,#aios-app-root span{color:#1b2333}#aios-app-root .aios-tc,#aios-app-root .aios-tc *{color:#fff}#aios-app-root .aios-tc .aios-incard-share{color:#1b2333}#aios-app-root *{max-width:100%;box-sizing:border-box}#aios-app-root img{height:auto}.aios-q{display:flex;flex-direction:column;gap:.45rem}.aios-q-text{font-size:1.15rem;font-weight:700;line-height:1.35;color:#141b2b}.aios-input{padding:.85rem 1rem;font-size:1rem;border:1.5px solid #cfd6e6;border-radius:12px;background:#fff;color:#141b2b;box-sizing:border-box;width:100%;max-width:100%;transition:border-color .15s,box-shadow .15s}.aios-input::placeholder{color:#9aa4b8}.aios-input:focus{outline:none;border-color:#6a8bff;box-shadow:0 0 0 4px rgba(106,139,255,.18)}.aios-submit{margin-top:.4rem;padding:.95rem 1.4rem;font-size:1.05rem;font-weight:800;letter-spacing:.2px;border:0;border-radius:12px;color:#fff;background:linear-gradient(135deg,#7c3aed,#2563eb);cursor:pointer;box-shadow:0 12px 26px -10px rgba(37,99,235,.6)}.aios-submit:hover{filter:brightness(1.06)}.aios-tc-actions{margin-top:1.15rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.28);display:flex;flex-direction:column;gap:.75rem}.aios-incard-sharerow{display:flex;flex-direction:column;gap:.3rem}.aios-incard-share{width:100%;padding:.8rem 1rem;border:0;border-radius:11px;font-size:1rem;font-weight:800;letter-spacing:.2px;cursor:pointer;color:#1b2333;background:#fff;box-shadow:0 8px 20px -8px rgba(0,0,0,.45)}.aios-incard-share:hover{filter:brightness(.95)}.aios-incard-intents{display:flex;gap:.4rem;flex-wrap:wrap}.aios-incard-intent{flex:1 1 auto;text-align:center;padding:.5rem .7rem;border-radius:9px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);color:#fff;font-size:.8rem;font-weight:700;text-decoration:none;cursor:pointer;white-space:nowrap}.aios-incard-intent:hover{background:rgba(255,255,255,.26)}.aios-incard-note{font-size:.74rem;opacity:.85;text-align:center;min-height:.9em;white-space:pre-wrap}.aios-incard-bio{display:flex;flex-direction:column;gap:.28rem}.aios-incard-biolabel{margin:0;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;opacity:.8}.aios-incard-biotext{margin:0;font-size:.92rem;line-height:1.4}.aios-incard-copyrow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}.aios-incard-copy{padding:.32rem .8rem;border-radius:8px;border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.16);color:#fff;font-size:.78rem;font-weight:700;cursor:pointer}.aios-incard-copy:hover{background:rgba(255,255,255,.3)}.aios-incard-copynote{font-size:.72rem;opacity:.85}.aios-incard-market{display:inline-block;font-size:.72rem;opacity:.82;color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.4);align-self:flex-start}.aios-incard-market:hover{opacity:1}.aios-reading{display:flex;flex-direction:column;gap:1rem;margin-top:.3rem;padding:1.15rem 1.2rem;border-radius:14px;background:rgba(30,40,70,.05);border:1px solid rgba(30,40,70,.12)}.aios-reading-label{margin:0 0 .3rem;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;opacity:.6}.aios-reading-val{margin:0;font-size:1rem;line-height:1.55;white-space:pre-wrap}.aios-reading-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.1rem 0 0;padding:0;list-style:none}.aios-reading-chip{padding:.28rem .7rem;border-radius:999px;font-size:.85rem;background:rgba(30,40,70,.08);border:1px solid rgba(30,40,70,.15)}.aios-market-wrap{text-align:center;margin-top:.3rem}.aios-market-link{display:inline-block;font-size:.8rem;opacity:.6;text-decoration:none;color:inherit;border-bottom:1px solid transparent}.aios-market-link:hover{opacity:.95;border-bottom-color:currentColor}.aios-tease{margin:0 0 .55rem;font-size:.98rem;font-weight:600;line-height:1.45}@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}";
     document.head.appendChild(style);
   }
   function start() {

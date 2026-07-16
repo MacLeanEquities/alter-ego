@@ -5,11 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What's the one thing you're most proud to be known for?",
-    "When you feel completely at ease, what do you do?",
-    "What's a quality you have that feels like a superpower?",
-    "What's the most unexpected strength about you?",
-    "What's the first thing people notice about you?"
+    "What metaphor describes your current self?",
+    "What's your motto?",
+    "What's one trait that defines you?",
+    "How do your closest friends see you?",
+    "What side of yourself have you hidden?"
   ],
   "askName": true,
   "hasCard": true,
@@ -229,6 +229,25 @@ async function doShare(caption) {
   try { await navigator.clipboard.writeText(caption); return "copied"; }
   catch (e) { return "failed"; }
 }
+// B3: the pre-filled post SPLIT into text + url, for the web-intent links (which
+// take the text and the url as separate params).
+function shareParts(reading, title) {
+  const head = title || cardHeadline(reading);
+  const ess = cardEssence(reading);
+  const text = ess ? (head + " \u2014 " + ess) : head;
+  const url = CONFIG.share && CONFIG.share.url ? CONFIG.share.url : "";
+  return { text: text, url: url };
+}
+// Direct web-share intents. X pre-fills BOTH text + url; LinkedIn's share-offsite
+// endpoint only accepts the url (it ignores a text param), so it gets the link.
+function xIntentUrl(text, url) {
+  let u = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text || "");
+  if (url) u += "&url=" + encodeURIComponent(url);
+  return u;
+}
+function linkedInIntentUrl(url) {
+  return "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(url || "");
+}
 // The polished, DESIGNED on-screen reading (used only for NO-CARD products; card
 // products show the reading inside the card itself).
 function renderReading(reading, fields) {
@@ -258,9 +277,10 @@ function renderMarketLink() {
   ]));
   return wrap;
 }
-// Per-card bio line (FIX 2): the MAIN card uses the engine's polished bio_line
-// (with the optional LinkedIn variant); a reward card derives a short line from
-// its OWN archetype + essence, same hard rules (no emoji, well under 150 chars).
+// Per-card bio line: the MAIN card uses the engine's polished bio_line (two
+// first-person sentences); each reward card uses its OWN engine bio_line (also
+// two first-person sentences, in that card's voice). Same hard rules: no emoji,
+// no archetype title, ~120-260 chars.
 function perCardBio(reading, opts) {
   // Fix 3: the bio comes from the ENGINE (first-person, no archetype title). Main
   // card: the top-level reading.bio_line (passed as opts.mainBio). Reward card: its
@@ -290,18 +310,41 @@ function inCardBioRow(label, text) {
 function buildCardActions(reading, opts) {
   opts = opts || {};
   const bar = $("div", { class: "aios-tc-actions", "data-no-share": "1" });
-  // FIX 3 + 4: the BUTTON reads "Share your <card>"; the pre-filled CAPTION is
-  // still the archetype + essence + link (share.cta may seed it).
+  // B3: Share must actually help people POST. Primary = COPY the pre-filled post
+  // (archetype + essence + link) to the clipboard - reliable EVERYWHERE, the
+  // default. Plus direct web-intent links to X + LinkedIn (new tab, pre-filled
+  // where the platform allows). navigator.share stays as an ADDITIONAL option
+  // where supported (mobile), never the only path. The pre-filled CAPTION is the
+  // archetype + one-line essence + link; each of the cards shares its OWN.
   const label = opts.label || CONFIG.productName || "card";
-  const btn = $("button", { type: "button", "data-aios-share-btn": "1", class: "aios-incard-share" }, ["Share your " + label]);
   const note = $("span", { "aria-live": "polite", class: "aios-incard-note" });
+  // Primary: copy to clipboard.
+  const btn = $("button", { type: "button", "data-aios-share-btn": "1", "data-aios-share-copy": "1", class: "aios-incard-share" }, ["Share your " + label]);
   btn.addEventListener("click", async () => {
     const cap = shareCaption(reading, cardHeadline(reading));
-    const r = await doShare(cap);
-    note.textContent = r === "copied" ? "Caption copied." : r === "shared" ? "Shared!" : r === "cancelled" ? "" : cap;
+    try { await navigator.clipboard.writeText(cap); note.textContent = "Copied - paste it into your post."; }
+    catch (e) { note.textContent = "Copy this: " + cap; }
   });
-  const shareRow = $("div", { class: "aios-incard-sharerow" }); shareRow.appendChild(btn); shareRow.appendChild(note);
+  // Direct web-share intents (new tab).
+  const parts = shareParts(reading, cardHeadline(reading));
+  const xLink = $("a", { class: "aios-incard-intent", "data-aios-share-x": "1", href: xIntentUrl(parts.text, parts.url), target: "_blank", rel: "noreferrer" }, ["Share to X"]);
+  const liLink = $("a", { class: "aios-incard-intent", "data-aios-share-linkedin": "1", href: linkedInIntentUrl(parts.url || parts.text), target: "_blank", rel: "noreferrer" }, ["Share to LinkedIn"]);
+  const intents = $("div", { class: "aios-incard-intents" });
+  intents.appendChild(xLink); intents.appendChild(liLink);
+  // Additional native share where the device supports it well (mobile).
+  if (typeof navigator !== "undefined" && navigator.share) {
+    const nativeBtn = $("button", { type: "button", "data-aios-share-native": "1", class: "aios-incard-intent" }, ["Share\u2026"]);
+    nativeBtn.addEventListener("click", async () => {
+      const cap = shareCaption(reading, cardHeadline(reading));
+      const r = await doShare(cap);
+      note.textContent = r === "shared" ? "Shared!" : r === "copied" ? "Copied - paste it into your post." : r === "cancelled" ? "" : cap;
+    });
+    intents.appendChild(nativeBtn);
+  }
+  const shareRow = $("div", { class: "aios-incard-sharerow" });
+  shareRow.appendChild(btn); shareRow.appendChild(intents);
   bar.appendChild(shareRow);
+  bar.appendChild(note);
   // FIX 2: a SINGLE add-to-bio line + Copy on this card (no separate LinkedIn line),
   // labeled "Add this to any bio".
   const bio = perCardBio(reading, opts);
@@ -371,11 +414,12 @@ function renderRewardCards(reading, into) {
 }
 // ---- Wave-2: the bio line (a copyable self-descriptor to append to a social bio) ----
 // Data from the ENGINE (reading.bio_line: a string, or { universal, linkedin }).
-// Defensive: strip emoji and hard-cap length so the on-screen line always meets
-// the "no emoji, well under 150 chars" bar even if the engine drifts.
+// Defensive: strip emoji and hard-cap length. The bio is now TWO first-person
+// sentences (~120-260 chars), so the cap is 280 - it guards against a runaway
+// engine, never truncates a well-formed two-sentence bio.
 function sanitizeBio(s) {
   var t = String(s || "").replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2B00}-\u{2BFF}\uFE0F]/gu, "").replace(/\s+/g, " ").trim();
-  if (t.length > 150) t = t.slice(0, 147).replace(/\s+\S*$/, "") + "…";
+  if (t.length > 280) t = t.slice(0, 277).replace(/\s+\S*$/, "") + "…";
   return t;
 }
 function bioLineData(reading) {
@@ -523,6 +567,12 @@ function injectResponsiveReset() {
     ".aios-incard-sharerow{display:flex;flex-direction:column;gap:.3rem}" +
     ".aios-incard-share{width:100%;padding:.8rem 1rem;border:0;border-radius:11px;font-size:1rem;font-weight:800;letter-spacing:.2px;cursor:pointer;color:#1b2333;background:#fff;box-shadow:0 8px 20px -8px rgba(0,0,0,.45)}" +
     ".aios-incard-share:hover{filter:brightness(.95)}" +
+    // B3: the direct web-share intents (X / LinkedIn / native), a row of chips under
+    // the primary copy button. Outlined on the card gradient, so the white copy CTA
+    // stays the clear primary.
+    ".aios-incard-intents{display:flex;gap:.4rem;flex-wrap:wrap}" +
+    ".aios-incard-intent{flex:1 1 auto;text-align:center;padding:.5rem .7rem;border-radius:9px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.12);color:#fff;font-size:.8rem;font-weight:700;text-decoration:none;cursor:pointer;white-space:nowrap}" +
+    ".aios-incard-intent:hover{background:rgba(255,255,255,.26)}" +
     ".aios-incard-note{font-size:.74rem;opacity:.85;text-align:center;min-height:.9em;white-space:pre-wrap}" +
     ".aios-incard-bio{display:flex;flex-direction:column;gap:.28rem}" +
     ".aios-incard-biolabel{margin:0;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;opacity:.8}" +

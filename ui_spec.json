@@ -1,11 +1,11 @@
 {
   "contract": "ui_spec",
   "schema_version": "1.0.0",
-  "ui_spec_id": "d450a7bd-242c-4f72-a8f3-cea7b6ea90ef",
-  "blueprint_id": "61fc61d9-ac16-432b-8db4-5c864da38ae1",
+  "ui_spec_id": "1fc3205b-e068-475f-9ae8-34ee85deae4b",
+  "blueprint_id": "83743f41-ac22-4f90-9437-57d00a436d66",
   "slug": "alter-ego",
   "is_test": false,
-  "created_at": "2026-07-16T00:51:52.551Z",
+  "created_at": "2026-07-16T02:20:51.137Z",
   "theme": {
     "kit": "ui-primitives",
     "mode": "system"
@@ -78,12 +78,12 @@
       "id": "about",
       "route": "/about",
       "title": "About",
-      "purpose": "Plain statement of what this venture is.",
+      "purpose": "Customer-facing statement of what this product gives you.",
       "components": [
         {
           "type": "prose",
           "props": {
-            "text": "People do not share utilities — they share identity. Spotify Wrapped, MBTI, and\nevery viral \"which one are you\" test work because they hand someone a mirror and\na label they are proud to post. Alter Ego is that mechanic built as an AI product:\nanswer a handful of honest questions and get back a named \"alter ego\" — an\nevocative archetype, a sharp-but-warm reading of who you are, your strengths and\nyour shadow, and a one-line metaphor — rendered as a beautiful, screenshot-ready\ncard. It costs ~nothing to run (local model + templated card), spreads itself\n(\"what's your Alter Ego?\"), and every share is an ad we never paid for. For the\nAI OS this is an audience engine and a factory proof: it builds the reusable\n\"questionnaire -> AI identity -> shareable card -> captured email\" machine that\nthe business-vitals vertical then reuses."
+            "text": "FREE, forever. Paste nothing — just answer 5 quick, revealing questions. In\nunder a minute you see your Alter Ego card (your coined archetype, a one-line\nmetaphor, a few traits, a motto). Enter your email and, right on screen, you get\nyour full reading PLUS two more cards worth posting: your Friend Group Ego (who\nyou are to the people around you) and your Shadow Ego (the person you almost were).\nThe email is the only ask, and it is the delivery of real extra value, not a gate.\nThere is NO paid tier now (deliberate — this is an audience play). The only CTA is\nsoft: \"built by Scott MacLean, who runs a one-person company of AI agents — see\nwhat else the machine builds\" -> macleanmarket.com + an optional subscribe.\nDesigned from day one to also be GIFTABLE as a free add-on bonus that can bolt\nonto any future MacLean offer."
           }
         }
       ]
