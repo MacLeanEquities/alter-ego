@@ -1,129 +1,131 @@
-const archetypeLibrary = [
-  {
-    archetype_name: "The Bridge Builder",
-    one_line_essence: "You're the one who connects people across divides.",
-    visual_metaphor: "A stone bridge over a rushing river",
-    strengths: ["Active listening", "Finding common ground", "Patience"],
-    shadow_traits: ["Overly accommodating", "Avoids conflict"],
-    motto_chapter_themeword: "Bridge",
-    narrative: "You thrive when you can bring together diverse perspectives. Your patience and active listening help others feel heard, but sometimes you put others' needs before your own, leading to burnout."
-  },
-  {
-    archetype_name: "The Quiet Observer",
-    one_line_essence: "You're the one who notices the unspoken details.",
-    visual_metaphor: "A still pond reflecting the sky",
-    strengths: ["Attentive", "Perceptive", "Thoughtful"],
-    shadow_traits: ["Takes time to share personal stories", "Hesitates to speak up in group settings"],
-    motto_chapter_themeword: "Stillness",
-    narrative: "You see the subtle shifts in a room and understand unspoken emotions. Your quiet presence makes others feel safe, but you sometimes hold back your own voice, missing opportunities to contribute."
-  },
-  {
-    archetype_name: "The Spark Igniter",
-    one_line_essence: "You're the one who turns ideas into action.",
-    visual_metaphor: "A spark striking flint",
-    strengths: ["Energetic", "Innovative", "Encouraging"],
-    shadow_traits: ["Rushes to action without planning", "Overlooks details"],
-    motto_chapter_themeword: "Spark",
-    narrative: "You light the fire for new projects and inspire others to join. Your energy is contagious, but you sometimes skip the planning phase, leading to unexpected challenges."
-  },
-  {
-    archetype_name: "The Calm Anchor",
-    one_line_essence: "You're the one who keeps things steady in chaos.",
-    visual_metaphor: "A lighthouse in a storm",
-    strengths: ["Steadfast", "Reassuring", "Level-headed"],
-    shadow_traits: ["Resists change", "Takes too long to adapt"],
-    motto_chapter_themeword: "Anchor",
-    narrative: "You provide stability when things feel uncertain. Your calm demeanor helps others feel secure, but you may struggle to embrace new approaches when the situation changes."
-  },
-  {
-    archetype_name: "The Pattern Finder",
-    one_line_essence: "You're the one who sees connections others miss.",
-    visual_metaphor: "A spider weaving a web",
-    strengths: ["Analytical", "Creative", "Detail-oriented"],
-    shadow_traits: ["Overanalyzes", "Sees patterns where none exist"],
-    motto_chapter_themeword: "Pattern",
-    narrative: "You spot the hidden links between ideas and events. Your insight helps solve complex problems, but you sometimes get stuck in the details, missing the bigger picture."
-  },
-  {
-    archetype_name: "The Empathic Guide",
-    one_line_essence: "You're the one who helps others find their path.",
-    visual_metaphor: "A compass in a forest",
-    strengths: ["Compassionate", "Supportive", "Patient"],
-    shadow_traits: ["Takes on others' problems as their own", "Struggles to set boundaries"],
-    motto_chapter_themeword: "Guide",
-    narrative: "You help others navigate their challenges with kindness and understanding. Your empathy is a gift, but you may take on too much, leaving little energy for yourself."
-  },
-  {
-    archetype_name: "The Thoughtful Connector",
-    one_line_essence: "You're the one who builds meaningful connections.",
-    visual_metaphor: "A network of glowing threads",
-    strengths: ["Relational", "Inclusive", "Trustworthy"],
-    shadow_traits: ["Overlooks their own needs", "Seeks validation from others"],
-    motto_chapter_themeword: "Thread",
-    narrative: "You create deep bonds by genuinely caring for others. Your inclusivity makes people feel valued, but you sometimes neglect your own well-being to keep the connections strong."
-  },
-  {
-    archetype_name: "The Steady Hand",
-    one_line_essence: "You're the one who gets things done reliably.",
-    visual_metaphor: "A well-worn tool in a toolbox",
-    strengths: ["Reliable", "Practical", "Consistent"],
-    shadow_traits: ["Resists new methods", "Prefers routine"],
-    motto_chapter_themeword: "Hand",
-    narrative: "You are the dependable person who ensures tasks are completed. Your consistency is a strength, but you may be slow to adopt new tools or approaches when they could improve efficiency."
-  },
-  {
-    archetype_name: "The Curious Explorer",
-    one_line_essence: "You're the one who seeks new experiences.",
-    visual_metaphor: "A compass pointing to unknown lands",
-    strengths: ["Inquisitive", "Adaptable", "Open-minded"],
-    shadow_traits: ["Gets distracted easily", "Leaves tasks unfinished"],
-    motto_chapter_themeword: "Explore",
-    narrative: "You are always eager to learn and try new things. Your curiosity drives innovation, but you sometimes lose focus on current projects to chase the next adventure."
-  },
-  {
-    archetype_name: "The Patient Listener",
-    one_line_essence: "You're the one who gives space for others to speak.",
-    visual_metaphor: "A comfortable chair in a quiet room",
-    strengths: ["Attentive", "Supportive", "Non-judgmental"],
-    shadow_traits: ["Takes too long to respond", "Avoids direct feedback"],
-    motto_chapter_themeword: "Listen",
-    narrative: "You create a safe space for others to share. Your patience helps people open up, but you may wait too long to offer your own perspective or address issues directly."
-  }
-];
-
-function computeHash(answers) {
-  let hash = 0;
-  for (const answer of answers) {
-    for (const char of answer) {
-      hash = ((hash << 5) - hash) + char.charCodeAt(0);
-      hash = hash & 0xFFFFFFFF;
-    }
-  }
-  return hash;
-}
-
 export function runCapability(input) {
-  const hash = computeHash(input.answers);
-  const index = (hash % 10 + 10) % 10;
-  const mainCard = archetypeLibrary[index];
-  const friendGroupCard = archetypeLibrary[(index + 1) % 10];
-  const shadowCard = archetypeLibrary[(index + 2) % 10];
-  
-  const reward_cards = {
-    friend_group_ego: friendGroupCard,
-    shadow_ego: shadowCard
-  };
-  
-  const universalBio = `${mainCard.archetype_name}, the one who ${mainCard.one_line_essence.replace(/^You're the one who /, '')}`;
-  const linkedinBio = `${mainCard.archetype_name}, the one who ${mainCard.one_line_essence.replace(/^You're the one who /, '')} in the professional world.`;
-  const bio_line = {
-    universal: universalBio,
-    linkedin: linkedinBio
-  };
-  
+  const archetypes = [
+    {
+      archetype_name: "The Curious Bridge",
+      one_line_essence: "You're the one who connects the dots between the unexpected.",
+      visual_metaphor: "A bridge made of glowing, interconnected puzzle pieces",
+      strengths: ["Curiosity", "Pattern Recognition", "Empathy"],
+      shadow_traits: ["Overthinking", "Avoiding Conflict"],
+      motto_chapter_themeword: "Connect",
+      narrative: "You see the world as a web of connections. Your curiosity drives you to find the hidden links between ideas, people, and experiences. You thrive when you can bring together disparate elements into a cohesive whole, but sometimes you get lost in the details, overanalyzing every possible connection."
+    },
+    {
+      archetype_name: "The Quiet Innovator",
+      one_line_essence: "You're the one who turns small ideas into meaningful change.",
+      visual_metaphor: "A single seedling growing through a crack in concrete",
+      strengths: ["Patience", "Attention to Detail", "Resilience"],
+      shadow_traits: ["Self-Doubt", "Hesitation to Share"],
+      motto_chapter_themeword: "Grow",
+      narrative: "You work steadily, often behind the scenes, to nurture small ideas until they blossom. You find joy in the quiet process of creation and the tangible results of your efforts. However, you sometimes second-guess your ideas and hold back from sharing them until they feel perfect."
+    },
+    {
+      archetype_name: "The Patient Listener",
+      one_line_essence: "You're the one who makes space for others to be heard.",
+      visual_metaphor: "A calm pond reflecting a clear sky",
+      strengths: ["Active Listening", "Patience", "Emotional Intelligence"],
+      shadow_traits: ["Holding Back", "Taking on Too Much"],
+      motto_chapter_themeword: "Listen",
+      narrative: "You create a safe space for others to share their thoughts and feelings. Your patience and emotional intelligence help people feel understood, but you sometimes take on too much responsibility for others' emotions and hold back your own voice."
+    },
+    {
+      archetype_name: "The Creative Catalyst",
+      one_line_essence: "You're the one who sparks new ideas in unexpected places.",
+      visual_metaphor: "A spark igniting a cluster of glowing, interconnected stars",
+      strengths: ["Creativity", "Energy", "Openness"],
+      shadow_traits: ["Distractibility", "Overcommitting"],
+      motto_chapter_themeword: "Spark",
+      narrative: "You bring energy and fresh perspectives to any group, turning ordinary moments into opportunities for innovation. Your creativity is contagious, but you sometimes get distracted by too many ideas and overcommit to projects before they're fully formed."
+    },
+    {
+      archetype_name: "The Steady Anchor",
+      one_line_essence: "You're the one who keeps things grounded when the world feels chaotic.",
+      visual_metaphor: "A lighthouse standing firm against stormy waves",
+      strengths: ["Reliability", "Stability", "Practicality"],
+      shadow_traits: ["Rigidity", "Avoiding Change"],
+      motto_chapter_themeword: "Anchor",
+      narrative: "You provide a sense of stability and security in uncertain times. Your practical approach helps others navigate challenges, but you sometimes resist change and hold onto old ways of doing things."
+    },
+    {
+      archetype_name: "The Thoughtful Bridge",
+      one_line_essence: "You're the one who builds understanding between different perspectives.",
+      visual_metaphor: "A bridge made of woven threads of different colors",
+      strengths: ["Empathy", "Communication", "Adaptability"],
+      shadow_traits: ["People-Pleasing", "Difficulty Setting Boundaries"],
+      motto_chapter_themeword: "Bridge",
+      narrative: "You excel at finding common ground and facilitating conversations between people with different viewpoints. Your empathy helps you navigate complex social dynamics, but you sometimes prioritize others' needs over your own and struggle to set boundaries."
+    },
+    {
+      archetype_name: "The Quiet Builder",
+      one_line_essence: "You're the one who creates lasting value through steady effort.",
+      visual_metaphor: "A stone wall being built one stone at a time",
+      strengths: ["Diligence", "Consistency", "Integrity"],
+      shadow_traits: ["Perfectionism", "Withholding Feedback"],
+      motto_chapter_themeword: "Build",
+      narrative: "You take pride in creating things that endure, working steadily without seeking attention. Your consistency and integrity are your hallmarks, but you sometimes get stuck in perfectionism and hesitate to share your work until it feels flawless."
+    },
+    {
+      archetype_name: "The Joyful Explorer",
+      one_line_essence: "You're the one who finds wonder in the everyday journey.",
+      visual_metaphor: "A path through a field of wildflowers, leading to a distant mountain",
+      strengths: ["Curiosity", "Optimism", "Flexibility"],
+      shadow_traits: ["Impulsivity", "Avoiding Deep Commitments"],
+      motto_chapter_themeword: "Explore",
+      narrative: "You approach life with a sense of wonder and a desire to experience new things. Your optimism and flexibility make you adaptable, but you sometimes act on impulse and avoid making long-term commitments."
+    },
+    {
+      archetype_name: "The Insightful Guide",
+      one_line_essence: "You're the one who helps others see their own potential.",
+      visual_metaphor: "A compass pointing to a clear path through a misty forest",
+      strengths: ["Clarity", "Encouragement", "Perceptiveness"],
+      shadow_traits: ["Over-Explaining", "Assuming Others See What You See"],
+      motto_chapter_themeword: "Guide",
+      narrative: "You have a gift for helping others see their own strengths and possibilities. Your clarity and encouragement empower people to grow, but you sometimes over-explain and assume others share your perspective."
+    },
+    {
+      archetype_name: "The Harmonious Mediator",
+      one_line_essence: "You're the one who turns conflict into collaboration.",
+      visual_metaphor: "A circle of hands holding together, with a rainbow in the background",
+      strengths: ["Conflict Resolution", "Collaboration", "Tact"],
+      shadow_traits: ["Avoiding Directness", "Taking on Others' Problems"],
+      motto_chapter_themeword: "Harmony",
+      narrative: "You excel at resolving disagreements and fostering teamwork. Your tact and collaborative spirit help groups move forward, but you sometimes avoid direct confrontation and take on others' problems as your own."
+    }
+  ];
+
+  const bioLines = [
+    { universal: "I connect the dots between the unexpected.", linkedin: "I thrive on finding the hidden links between ideas, people, and experiences, bringing together disparate elements into a cohesive whole." },
+    { universal: "I turn small ideas into meaningful change.", linkedin: "I nurture small ideas until they blossom, finding joy in the quiet process of creation and tangible results." },
+    { universal: "I make space for others to be heard.", linkedin: "I create safe spaces for sharing through patience and emotional intelligence, helping people feel understood." },
+    { universal: "I spark new ideas in unexpected places.", linkedin: "I bring energy and fresh perspectives to groups, turning ordinary moments into innovation opportunities." },
+    { universal: "I keep things grounded when the world feels chaotic.", linkedin: "I provide stability and security through practical approaches that help others navigate challenges." },
+    { universal: "I build understanding between different perspectives.", linkedin: "I excel at finding common ground and facilitating conversations between diverse viewpoints." },
+    { universal: "I create lasting value through steady effort.", linkedin: "I take pride in enduring creations built through consistent, integrity-driven work." },
+    { universal: "I find wonder in the everyday journey.", linkedin: "I approach life with curiosity and optimism, embracing new experiences with flexibility." },
+    { universal: "I help others see their own potential.", linkedin: "I empower growth through clarity and encouragement, helping people recognize their strengths." },
+    { universal: "I turn conflict into collaboration.", linkedin: "I resolve disagreements through tact and collaboration, fostering teamwork and moving groups forward." }
+  ];
+
+  function hash(str) {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) {
+      h = ((h << 5) - h) + str.charCodeAt(i);
+      h = h & h;
+    }
+    return h;
+  }
+
+  const inputKey = JSON.stringify(input);
+  const index = Math.abs(hash(inputKey)) % archetypes.length;
+  const main = archetypes[index];
+  const friendGroup = archetypes[(index + 1) % archetypes.length];
+  const shadow = archetypes[(index + 2) % archetypes.length];
+
   return {
-    ...mainCard,
-    reward_cards,
-    bio_line
+    ...main,
+    reward_cards: {
+      friend_group_ego: friendGroup,
+      shadow_ego: shadow
+    },
+    bio_line: bioLines[index]
   };
 }

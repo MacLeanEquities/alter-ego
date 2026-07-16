@@ -55,13 +55,21 @@ if (APP_FLOW) {
     readFileSync(new URL("./client.js", import.meta.url), "utf8"), "utf8");
 }
 const appMount = APP ? '<div id="aios-app-root"></div><script src="./client.js"></script>' : "";
+// Wave-2.2 Fix 1: PIN the light theme on <html> so the shared kit's tokens.css
+// never flips to dark under prefers-color-scheme: dark (that made the whole page,
+// incl. the question screen, near-black on a dark-mode visitor). And give app-flow
+// pages a FUN light GRADIENT body (inline, so it wins over the kit's flat token
+// bg). Every app-flow vertical gets this, not just Alter Ego.
+const bodyBg = APP
+  ? "linear-gradient(165deg,#f4f7ff 0%,#eef0fb 45%,#f6effb 100%) fixed"
+  : "var(--aios-color-bg)";
 
 for (const page of uiSpec.pages) {
   const body = renderToStaticMarkup(renderPage(page, ctx));
   const html = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en" data-aios-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${page.title}</title><link rel="stylesheet" href="./tokens.css"></head>
-<body style="background:var(--aios-color-bg);color:var(--aios-color-fg);font-family:var(--aios-font-body)">${body}${appMount}</body></html>
+<body style="background:${bodyBg};color:var(--aios-color-fg);font-family:var(--aios-font-body);min-height:100vh">${body}${appMount}</body></html>
 `;
   writeFileSync(new URL(`./dist/${page.id}.html`, import.meta.url), html, "utf8");
   console.log(`rendered ${page.id}.html (${html.length} bytes)`);

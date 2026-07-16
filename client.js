@@ -5,11 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What's the one word that describes your everyday energy?",
-    "Where do you feel most like your true self?",
-    "What strength do you share without thinking?",
-    "What's the one thing you'd want to be known for?",
-    "What's the most surprising positive quality people say about you?"
+    "What's the one thing you're most proud to be known for?",
+    "When you feel completely at ease, what do you do?",
+    "What's a quality you have that feels like a superpower?",
+    "What's the most unexpected strength about you?",
+    "What's the first thing people notice about you?"
   ],
   "askName": true,
   "hasCard": true,
@@ -79,20 +79,23 @@ function clear() { const r = root(); if (r) r.innerHTML = ""; return r; }
 function renderQuestions() {
   const r = clear(); if (!r) return;
   r.setAttribute("data-screen", "questions");
-  const form = $("form", { "data-aios-form": "1", style: { display: "flex", flexDirection: "column", gap: sp(4), maxWidth: "40rem", margin: "0 auto" } });
-  if (CONFIG.intro) form.appendChild($("p", { style: { fontSize: "var(--aios-text-lg, 1.125rem)", opacity: "0.9" } }, [CONFIG.intro]));
+  const form = $("form", { "data-aios-form": "1", class: "aios-quiz", style: { display: "flex", flexDirection: "column", gap: sp(4), maxWidth: "40rem", margin: "0 auto" } });
+  // Fix 1: NO intro here - the SSR shell already shows the product name + intro
+  // above #aios-app-root; rendering it again duplicated it.
   const inputs = [];
   if (CONFIG.askName) {
-    const wrap = $("label", { style: { display: "flex", flexDirection: "column", gap: sp(1) } }, ["Your name (optional)"]);
-    const inp = $("input", { type: "text", name: "aios-name", "data-aios-name": "1", autocomplete: "given-name", style: { padding: sp(3), fontSize: "1rem", border: "1px solid var(--aios-color-border,#ccc)", borderRadius: "var(--aios-radius-md,6px)", boxSizing: "border-box", width: "100%", maxWidth: "100%" } });
+    const wrap = $("label", { class: "aios-q" });
+    wrap.appendChild($("span", { class: "aios-q-text" }, ["Your name (optional)"]));
+    const inp = $("input", { type: "text", name: "aios-name", "data-aios-name": "1", autocomplete: "given-name", class: "aios-input", placeholder: "First name" });
     wrap.appendChild(inp); form.appendChild(wrap); form._name = inp;
   }
   CONFIG.questions.forEach((q, i) => {
-    const wrap = $("label", { style: { display: "flex", flexDirection: "column", gap: sp(1) } }, [(i + 1) + ". " + q]);
-    const inp = $("input", { type: "text", name: "aios-q" + i, "data-aios-q": String(i), required: "true", style: { padding: sp(3), fontSize: "1rem", border: "1px solid var(--aios-color-border,#ccc)", borderRadius: "var(--aios-radius-md,6px)", boxSizing: "border-box", width: "100%", maxWidth: "100%" } });
+    const wrap = $("label", { class: "aios-q" });
+    wrap.appendChild($("span", { class: "aios-q-text" }, [(i + 1) + ". " + q]));
+    const inp = $("input", { type: "text", name: "aios-q" + i, "data-aios-q": String(i), required: "true", class: "aios-input", placeholder: "Type your answer…" });
     wrap.appendChild(inp); form.appendChild(wrap); inputs.push(inp);
   });
-  const btn = $("button", { type: "submit", "data-aios-submit": "1", style: { padding: sp(3) + " " + sp(4), fontSize: "1rem", border: "0", borderRadius: "var(--aios-radius-md,6px)", background: "var(--aios-color-accent,#2563eb)", color: "var(--aios-color-on-accent,#fff)", cursor: "pointer" } }, ["See my result"]);
+  const btn = $("button", { type: "submit", "data-aios-submit": "1", class: "aios-submit" }, ["See my result →"]);
   form.appendChild(btn);
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -259,13 +262,13 @@ function renderMarketLink() {
 // (with the optional LinkedIn variant); a reward card derives a short line from
 // its OWN archetype + essence, same hard rules (no emoji, well under 150 chars).
 function perCardBio(reading, opts) {
-  if (opts && opts.mainBio != null) return bioLineData({ bio_line: opts.mainBio });
-  const head = cardHeadline(reading);
-  if (!head) return null;
-  const ess = cardEssence(reading);
-  const line = ess ? (head + ", " + ess.charAt(0).toLowerCase() + ess.slice(1)) : head;
-  const u = sanitizeBio(line);
-  return u ? { universal: u } : null;
+  // Fix 3: the bio comes from the ENGINE (first-person, no archetype title). Main
+  // card: the top-level reading.bio_line (passed as opts.mainBio). Reward card: its
+  // OWN bio_line. If the engine produced none, show no bio row - never a fabricated
+  // title-leading line.
+  const b = (opts && opts.mainBio != null) ? opts.mainBio : (reading && reading.bio_line);
+  if (b == null || b === "") return null;
+  return bioLineData({ bio_line: b });
 }
 // One "Add to your bio" row: the line + a one-click Copy.
 function inCardBioRow(label, text) {
@@ -299,11 +302,11 @@ function buildCardActions(reading, opts) {
   });
   const shareRow = $("div", { class: "aios-incard-sharerow" }); shareRow.appendChild(btn); shareRow.appendChild(note);
   bar.appendChild(shareRow);
-  // FIX 2: add-to-bio + Copy, on THIS card.
+  // FIX 2: a SINGLE add-to-bio line + Copy on this card (no separate LinkedIn line),
+  // labeled "Add this to any bio".
   const bio = perCardBio(reading, opts);
   if (bio && bio.universal) {
-    bar.appendChild(inCardBioRow("Add to your bio", bio.universal));
-    if (bio.linkedin) bar.appendChild(inCardBioRow("LinkedIn", bio.linkedin));
+    bar.appendChild(inCardBioRow("Add this to any bio", bio.universal));
   }
   // FIX 6: a quiet per-card market link (in addition to the page footer).
   if (CONFIG.marketLink && CONFIG.marketLink.url) {
@@ -318,7 +321,10 @@ function buildCardActions(reading, opts) {
 // and the affordances always sit INSIDE the gradient frame.
 function buildCardElement(reading, opts) {
   opts = opts || {};
-  const tc = renderTemplatedCard(reading, opts.reward ? Object.keys(reading) : null, opts.label || CONFIG.productName);
+  // A reward card renders its own fields, but NOT bio_line - that is an affordance
+  // (the "Add this to any bio" row), not card-body content (it duplicated otherwise).
+  const rewardFields = opts.reward ? Object.keys(reading).filter((k) => k !== "bio_line" && k !== "reward_cards") : null;
+  const tc = renderTemplatedCard(reading, rewardFields, opts.label || CONFIG.productName);
   const holder = $("div", { style: { display: "contents" } });
   holder.appendChild($("style", { html: tc.css }));
   const cardDiv = $("div", { "data-aios-card": "1", "data-aios-card-source": "templated", style: { maxWidth: "100%", overflowX: "auto" }, html: tc.html });
@@ -491,17 +497,26 @@ function injectResponsiveReset() {
   // Mobile-clean by construction: nothing exceeds the viewport, no horizontal
   // scroll, and reduced-motion is honored (we add no animations, but declare it).
   style.textContent = "html,body{margin:0;max-width:100%;overflow-x:hidden}" +
-    // FIX 1: a soft, airy LIGHT page - fun + light, so the vivid cards POP. Body
-    // text flips to dark-on-light so nothing washes out. The cards keep their own
-    // gradients + white text (self-contained), untouched.
-    "html,body{background:linear-gradient(165deg,#f4f7ff 0%,#eef0fb 45%,#f6effb 100%);background-attachment:fixed}" +
+    // FIX 1 (Wave 2.2): the LIGHT page now comes from the scaffold (<html
+    // data-aios-theme=light> + a light-gradient body inline, which the kit can no
+    // longer flip to dark). Here we only guarantee dark-on-light text everywhere
+    // in the app root, and keep the cards white-on-gradient.
+    "body{color:#1b2333}" +
     "#aios-app-root{box-sizing:border-box;max-width:100%;padding:var(--aios-space-4,1rem);color:#1b2333}" +
-    "#aios-app-root h1,#aios-app-root h2,#aios-app-root h3,#aios-app-root label,#aios-app-root p,#aios-app-root li,#aios-app-root strong{color:#1b2333}" +
+    "#aios-app-root h1,#aios-app-root h2,#aios-app-root h3,#aios-app-root label,#aios-app-root p,#aios-app-root li,#aios-app-root strong,#aios-app-root span{color:#1b2333}" +
     "#aios-app-root .aios-tc,#aios-app-root .aios-tc *{color:#fff}" + // cards stay white-on-gradient
     "#aios-app-root .aios-tc .aios-incard-share{color:#1b2333}" + // the white in-card CTA needs dark text
-    "#aios-app-root input{background:#fff;color:#1b2333}" +
     "#aios-app-root *{max-width:100%;box-sizing:border-box}" +
     "#aios-app-root img{height:auto}" +
+    // Fix 1: a fun, readable QUESTION SCREEN (not a boring form). Bold dark
+    // questions, inviting inputs with a clear focus state, a lively submit.
+    ".aios-q{display:flex;flex-direction:column;gap:.45rem}" +
+    ".aios-q-text{font-size:1.15rem;font-weight:700;line-height:1.35;color:#141b2b}" +
+    ".aios-input{padding:.85rem 1rem;font-size:1rem;border:1.5px solid #cfd6e6;border-radius:12px;background:#fff;color:#141b2b;box-sizing:border-box;width:100%;max-width:100%;transition:border-color .15s,box-shadow .15s}" +
+    ".aios-input::placeholder{color:#9aa4b8}" +
+    ".aios-input:focus{outline:none;border-color:#6a8bff;box-shadow:0 0 0 4px rgba(106,139,255,.18)}" +
+    ".aios-submit{margin-top:.4rem;padding:.95rem 1.4rem;font-size:1.05rem;font-weight:800;letter-spacing:.2px;border:0;border-radius:12px;color:#fff;background:linear-gradient(135deg,#7c3aed,#2563eb);cursor:pointer;box-shadow:0 12px 26px -10px rgba(37,99,235,.6)}" +
+    ".aios-submit:hover{filter:brightness(1.06)}" +
     // FIX 2,3,4,6: the affordances INSIDE the card frame (data-no-share). White
     // text on the card gradient; the Share button is a clear white CTA that pops.
     ".aios-tc-actions{margin-top:1.15rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.28);display:flex;flex-direction:column;gap:.75rem}" +
