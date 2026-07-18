@@ -5,11 +5,11 @@ import { renderCard } from "./card.mjs";
 
 const CONFIG = {
   "questions": [
-    "What's a vivid metaphor for your current energy?",
-    "What strength are you using right now?",
-    "What shadow are you noticing in yourself?",
-    "What word describes your ideal self?",
-    "What phrase do you say to yourself most often?"
+    "What animal or object feels like your true self?",
+    "What do you do without even thinking about it?",
+    "What's a habit you'd like to let go of?",
+    "What would a stranger say about your energy?",
+    "What name would fit your true self?"
   ],
   "askName": true,
   "hasCard": true,
@@ -70,6 +70,32 @@ const $ = (t, attrs, kids) => {
 };
 const sp = (n) => "var(--aios-space-" + n + ", " + (n * 0.25) + "rem)";
 
+// ---- Funnel events (horizontal: every vertical built on this template) ----
+// No third-party pixel, no cookie, no PII. The session id is a random token held
+// for this tab only, so the funnel can tell "one person did 5 things" from "5
+// people did 1 thing" without ever knowing who they are. Fire and forget: an
+// analytics call must never slow the product down or break it.
+const SESSION = (function () {
+  try {
+    var k = "aios_sid";
+    var s = sessionStorage.getItem(k);
+    if (!s) {
+      s = (crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now().toString(36));
+      sessionStorage.setItem(k, s);
+    }
+    return s;
+  } catch (e) { return "anon"; }
+})();
+function track(event, meta) {
+  try {
+    fetch("event", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ session_id: SESSION, event: event, meta: meta || {} }),
+      keepalive: true,
+    }).catch(function () {});
+  } catch (e) { /* analytics never breaks the product */ }
+}
+
 function fieldLabel(name) { return String(name).replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()); }
 
 function root() { return document.getElementById("aios-app-root"); }
@@ -101,10 +127,12 @@ function renderQuestions() {
     e.preventDefault();
     const answers = inputs.map((x) => (x.value || "").trim());
     if (answers.some((a) => !a)) { return; }
+    track("start", {});
     const firstName = form._name ? (form._name.value || "").trim() : "";
     btn.disabled = true; btn.textContent = "Reading...";
     try {
       const reading = await runCapability({ answers: answers, firstName: firstName, businessName: firstName });
+      track("complete", {});
       renderResult(reading, { answers, firstName });
     } catch (err) {
       const r2 = root(); if (r2) r2.appendChild($("p", { style: { color: "var(--aios-color-warning,#b45309)" } }, ["Something went wrong generating your result."]));
@@ -272,9 +300,11 @@ function renderReading(reading, fields) {
 function renderMarketLink() {
   if (!CONFIG.marketLink || !CONFIG.marketLink.url) return null;
   const wrap = $("div", { class: "aios-market-wrap" });
-  wrap.appendChild($("a", { class: "aios-market-link", href: CONFIG.marketLink.url, target: "_blank", rel: "noreferrer" }, [
+  const a = $("a", { class: "aios-market-link", href: CONFIG.marketLink.url, target: "_blank", rel: "noreferrer" }, [
     (CONFIG.marketLink.label || "More from MacLean Market") + " \u2192",
-  ]));
+  ]);
+  a.addEventListener("click", () => track("market_link", { url: CONFIG.marketLink.url }));
+  wrap.appendChild(a);
   return wrap;
 }
 // Per-card bio line: the MAIN card uses the engine's polished bio_line (two
@@ -324,11 +354,14 @@ function buildCardActions(reading, opts) {
     const cap = shareCaption(reading, cardHeadline(reading));
     try { await navigator.clipboard.writeText(cap); note.textContent = "Copied - paste it into your post."; }
     catch (e) { note.textContent = "Copy this: " + cap; }
+    track("share", { how: "copy" });
   });
   // Direct web-share intents (new tab).
   const parts = shareParts(reading, cardHeadline(reading));
   const xLink = $("a", { class: "aios-incard-intent", "data-aios-share-x": "1", href: xIntentUrl(parts.text, parts.url), target: "_blank", rel: "noreferrer" }, ["Share to X"]);
   const liLink = $("a", { class: "aios-incard-intent", "data-aios-share-linkedin": "1", href: linkedInIntentUrl(parts.url || parts.text), target: "_blank", rel: "noreferrer" }, ["Share to LinkedIn"]);
+  xLink.addEventListener("click", () => track("share", { how: "x" }));
+  liLink.addEventListener("click", () => track("share", { how: "linkedin" }));
   const intents = $("div", { class: "aios-incard-intents" });
   intents.appendChild(xLink); intents.appendChild(liLink);
   // Additional native share where the device supports it well (mobile).
@@ -337,6 +370,7 @@ function buildCardActions(reading, opts) {
     nativeBtn.addEventListener("click", async () => {
       const cap = shareCaption(reading, cardHeadline(reading));
       const r = await doShare(cap);
+      track("share", { how: "native", outcome: r });
       note.textContent = r === "shared" ? "Shared!" : r === "copied" ? "Copied - paste it into your post." : r === "cancelled" ? "" : cap;
     });
     intents.appendChild(nativeBtn);
@@ -506,6 +540,8 @@ function renderCapture(reading, ctx) {
       const res = await fetch("capture", { method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: addr, first_name: (ctx && ctx.firstName) || "", archetype: archetype, tags: tags }) });
       if (!res.ok) throw new Error("capture failed");
+      track("capture", {});
+      track("reveal", { cards: (CONFIG.rewardCards || []).length });
       // Only AFTER the capture is recorded do the bonus cards reveal - each a full
       // card with its OWN in-card Share / Add-to-bio / market affordances. The main
       // card (already shown) carries the full reading + its own bio, so there is no
@@ -601,6 +637,7 @@ function start() {
   const r = root();
   if (!r) return;
   injectResponsiveReset();
+  track("page_view", { questions: (CONFIG.questions || []).length });
   renderQuestions();
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);

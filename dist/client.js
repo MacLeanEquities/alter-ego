@@ -2,267 +2,291 @@
   // capability.mjs
   var _main = /* @__PURE__ */ (() => {
     function runCapability2(input) {
-      const archetypes = [
+      const archetypeList = [
         {
-          archetype_name: "The Curious Cartographer",
-          one_line_essence: "You're the one who turns a single question into a map of possibilities.",
-          visual_metaphor: "A compass pointing to a hidden valley",
+          archetype_name: "The Curator",
+          one_line_essence: "You're the one who finds the perfect artifact to spark a conversation.",
+          visual_metaphor: "A library shelf glowing with a single book that hums with light",
           strengths: [
-            "Asks the right questions",
-            "Sees patterns in chaos",
-            "Listens without judgment"
+            "Curates meaningful connections",
+            "Sees the story behind the object",
+            "Creates safe spaces for sharing"
           ],
           shadow_traits: [
-            "Tends to overthink the map before setting out",
-            "Can get lost in the details of the journey"
+            "Can get lost in the details",
+            "Overlooks the obvious"
           ],
-          motto_chapter_themeword: "Mapmaker's Resolve",
-          narrative: "You navigate the uncharted with a quiet confidence. Your strength lies in turning the abstract into a clear path, but sometimes you hesitate to share your map until it's perfect. You're the one who helps others find their way without leading them."
+          motto_chapter_themeword: "Curate",
+          narrative: "You have a knack for uncovering hidden gems in the mundane. Your strength lies in transforming ordinary moments into meaningful exchanges. But sometimes, you get so caught up in the perfect detail that you miss the bigger picture."
+        },
+        {
+          archetype_name: "The Bridge-Builder",
+          one_line_essence: "You're the one who connects disparate ideas into a shared path forward.",
+          visual_metaphor: "A wooden bridge spanning a river, with footprints of many different sizes on it",
+          strengths: [
+            "Builds bridges between conflicting perspectives",
+            "Sees the common ground in disagreements",
+            "Turns tension into collaboration"
+          ],
+          shadow_traits: [
+            "Takes on too much as the mediator",
+            "Forgets to take care of their own needs"
+          ],
+          motto_chapter_themeword: "Bridge",
+          narrative: "You excel at bringing people together, especially when they feel at odds. Your ability to find common ground is a gift. However, you sometimes neglect your own well-being while holding space for others."
+        },
+        {
+          archetype_name: "The Pattern-Seeker",
+          one_line_essence: "You're the one who spots the hidden pattern in the chaos and makes it clear.",
+          visual_metaphor: "A kaleidoscope revealing a clear, repeating geometric pattern",
+          strengths: [
+            "Identifies hidden connections",
+            "Simplifies complex information",
+            "Sees the bigger picture in details"
+          ],
+          shadow_traits: [
+            "Overlooks the human element in patterns",
+            "Assumes patterns always apply"
+          ],
+          motto_chapter_themeword: "Pattern",
+          narrative: "You have a natural talent for making sense of complexity. Your insights often lead to breakthroughs. But be mindful that not every situation fits a neat pattern, and the human element can be overlooked."
         },
         {
           archetype_name: "The Quiet Catalyst",
-          one_line_essence: "You're the one who sparks change without raising a voice.",
+          one_line_essence: "You're the one who sparks change without needing to be the loudest voice.",
           visual_metaphor: "A single drop of water causing ripples in a still pond",
           strengths: [
-            "Creates calm in tense moments",
-            "Sees potential in the unspoken",
-            "Acts with quiet intention"
+            "Creates change through subtle influence",
+            "Listens deeply before acting",
+            "Empowers others to lead"
           ],
           shadow_traits: [
-            "Sometimes waits too long to speak up",
-            "Can be too reserved when action is needed"
+            "Hesitates to speak up when needed",
+            "Waits for others to initiate"
           ],
-          motto_chapter_themeword: "Ripple Effect",
-          narrative: "You are the calm center that transforms the energy around you. Your strength is in your ability to listen deeply and act with purpose, but you may hold back when you feel the need to be heard. You're the one who turns a whisper into a movement."
+          motto_chapter_themeword: "Ripple",
+          narrative: "You often spark meaningful change without drawing attention to yourself. Your quiet presence encourages others to step up. However, you might hold back from speaking your mind when it's necessary."
         },
         {
-          archetype_name: "The Patient Weaver",
-          one_line_essence: "You're the one who weaves connections from the threads of everyday moments.",
-          visual_metaphor: "A tapestry of interwoven threads, each with its own color and texture",
+          archetype_name: "The Story-Weaver",
+          one_line_essence: "You're the one who turns everyday moments into meaningful narratives.",
+          visual_metaphor: "A tapestry woven from threads of different colors and textures",
           strengths: [
-            "Builds deep, lasting relationships",
-            "Sees the beauty in small details",
-            "Creates harmony from diverse elements"
+            "Creates compelling narratives from ordinary events",
+            "Helps others see their own stories",
+            "Connects personal experiences to universal themes"
           ],
           shadow_traits: [
-            "May take too long to make a decision",
-            "Can become overwhelmed by too many connections"
+            "Can get caught up in the story and lose sight of the facts",
+            "Overlooks the need for practical action"
           ],
-          motto_chapter_themeword: "Thread by Thread",
-          narrative: "You find meaning in the connections between people and ideas. Your strength is in your patience and attention to detail, but you might get caught in the complexity of the weave. You're the one who turns a simple thread into a tapestry of belonging."
+          motto_chapter_themeword: "Weave",
+          narrative: "You have a gift for turning the mundane into something meaningful. Your stories help others see their own journeys. But remember to balance storytelling with actionable steps."
         },
         {
-          archetype_name: "The Clear-Sighted Guide",
-          one_line_essence: "You're the one who cuts through confusion to reveal the path forward.",
-          visual_metaphor: "A lighthouse beam cutting through fog",
+          archetype_name: "The Compassionate Analyst",
+          one_line_essence: "You're the one who combines deep understanding with genuine care.",
+          visual_metaphor: "A magnifying glass held over a heart-shaped leaf",
           strengths: [
-            "Clarifies complex situations",
-            "Sees the big picture without losing detail",
-            "Provides direction with calm certainty"
+            "Analyzes with empathy",
+            "Sees the human impact of data",
+            "Offers solutions that consider people"
           ],
           shadow_traits: [
-            "Can be too direct, overlooking feelings",
-            "May rush to solve without fully listening"
+            "Spends too much time analyzing to avoid action",
+            "Can be overly cautious"
           ],
-          motto_chapter_themeword: "Clear Path",
-          narrative: "You are the beacon in the fog, helping others see the way. Your strength is in your clarity and ability to simplify, but you might overlook the emotional landscape. You're the one who turns confusion into confidence."
+          motto_chapter_themeword: "Analyze",
+          narrative: "You bring a unique blend of insight and compassion to every situation. Your ability to understand both the data and the people behind it is rare. However, you might sometimes delay action while seeking the perfect analysis."
         },
         {
-          archetype_name: "The Thoughtful Bridge",
-          one_line_essence: "You're the one who connects disparate ideas into a cohesive whole.",
-          visual_metaphor: "A bridge spanning a river, with different landscapes on each side",
+          archetype_name: "The Unlikely Connector",
+          one_line_essence: "You're the one who finds unexpected connections between people and ideas.",
+          visual_metaphor: "A map with dotted lines connecting random points across a city",
           strengths: [
-            "Sees connections others miss",
-            "Facilitates understanding between groups",
-            "Builds consensus with empathy"
+            "Makes surprising connections",
+            "Sees potential in unlikely places",
+            "Brings together diverse groups"
           ],
           shadow_traits: [
-            "May avoid conflict by smoothing over differences",
-            "Can become a bottleneck when too many rely on you"
+            "Can be distracted by the next connection",
+            "Forgets to follow up on the initial connection"
           ],
-          motto_chapter_themeword: "Bridge Builder",
-          narrative: "You are the connective tissue between ideas and people. Your strength is in your ability to find common ground, but you might avoid necessary friction. You're the one who turns a divide into a shared journey."
+          motto_chapter_themeword: "Connect",
+          narrative: "You have a knack for seeing how things are linked in ways others miss. Your connections often lead to new opportunities. But be mindful to nurture the connections you make, not just move on to the next one."
         },
         {
-          archetype_name: "The Steady Current",
-          one_line_essence: "You're the one who moves forward with consistent, gentle persistence.",
-          visual_metaphor: "A river flowing steadily through a forest",
+          archetype_name: "The Thoughtful Listener",
+          one_line_essence: "You're the one who hears what's unsaid and responds with care.",
+          visual_metaphor: "A pair of ears with a gentle glow, surrounded by floating thought bubbles",
           strengths: [
-            "Maintains momentum through challenges",
-            "Provides reliable support",
-            "Adapts without losing direction"
+            "Listens deeply without judgment",
+            "Picks up on subtle cues",
+            "Creates space for others to be heard"
           ],
           shadow_traits: [
-            "May resist change that disrupts the flow",
-            "Can be too passive in moments requiring action"
+            "Takes on others' emotions as their own",
+            "Struggles to set boundaries"
           ],
-          motto_chapter_themeword: "Flowing Forward",
-          narrative: "You are the steady force that carries others along. Your strength is in your consistency and calm, but you might not always be the one to initiate change. You're the one who turns a slow journey into a reliable path."
+          motto_chapter_themeword: "Listen",
+          narrative: "Your ability to truly hear others is a gift. You make people feel understood and safe. However, you might absorb others' emotions and find it hard to step back."
         },
         {
-          archetype_name: "The Reflective Anchor",
-          one_line_essence: "You're the one who grounds the moment in deep reflection.",
-          visual_metaphor: "An anchor holding a ship steady in a calm sea",
+          archetype_name: "The Patient Guide",
+          one_line_essence: "You're the one who walks alongside others, step by step, without rushing.",
+          visual_metaphor: "A winding path through a forest, with a steady footstep in the center",
           strengths: [
-            "Provides stability in uncertainty",
-            "Thinks deeply before acting",
-            "Creates space for others to reflect"
+            "Guides with patience and consistency",
+            "Adapts to the pace of others",
+            "Provides steady support"
           ],
           shadow_traits: [
-            "May get stuck in reflection without moving forward",
-            "Can be perceived as indecisive"
+            "Can be too slow to act when speed is needed",
+            "Avoids conflict to maintain harmony"
           ],
-          motto_chapter_themeword: "Anchor Point",
-          narrative: "You are the calm in the storm, providing a steady presence. Your strength is in your depth of thought, but you might need to balance reflection with action. You're the one who turns a moment of stillness into a foundation for growth."
+          motto_chapter_themeword: "Guide",
+          narrative: "You are a steady presence for those navigating uncertainty. Your patience helps others feel safe to move at their own pace. But remember that sometimes, a quicker response is needed."
         },
         {
-          archetype_name: "The Open-Handed Connector",
-          one_line_essence: "You're the one who brings people together with generosity of spirit.",
-          visual_metaphor: "A hand open in welcome, with a circle of people around it",
+          archetype_name: "The Insightful Questioner",
+          one_line_essence: "You're the one who asks the question that unlocks the next level of understanding.",
+          visual_metaphor: "A key turning in a lock that reveals a bright light",
           strengths: [
-            "Makes others feel seen and valued",
-            "Shares resources without hesitation",
-            "Fosters a sense of community"
+            "Asks the right questions at the right time",
+            "Challenges assumptions gently",
+            "Helps others see blind spots"
           ],
           shadow_traits: [
-            "May overextend yourself to help others",
-            "Can be too trusting of others' intentions"
+            "Can be perceived as challenging",
+            "May ask too many questions without giving space"
           ],
-          motto_chapter_themeword: "Open Hand",
-          narrative: "You are the heart of the gathering, making everyone feel welcome. Your strength is in your generosity, but you might need to set boundaries. You're the one who turns a group into a family."
-        },
-        {
-          archetype_name: "The Gentle Innovator",
-          one_line_essence: "You're the one who brings new ideas with kindness and care.",
-          visual_metaphor: "A seedling growing through a crack in concrete",
-          strengths: [
-            "Implements change with empathy",
-            "Sees potential in the overlooked",
-            "Creates solutions that feel natural"
-          ],
-          shadow_traits: [
-            "May avoid conflict to keep harmony",
-            "Can be too cautious in taking risks"
-          ],
-          motto_chapter_themeword: "Gentle Growth",
-          narrative: "You are the quiet force that brings new ideas to life with care. Your strength is in your ability to innovate without disruption, but you might hold back when boldness is needed. You're the one who turns a small idea into a thriving garden."
-        },
-        {
-          archetype_name: "The Calm Navigator",
-          one_line_essence: "You're the one who guides through uncertainty with unwavering calm.",
-          visual_metaphor: "A ship sailing smoothly through a calm sea at dawn",
-          strengths: [
-            "Remains composed in chaos",
-            "Makes complex decisions with clarity",
-            "Provides reassurance without overpromising"
-          ],
-          shadow_traits: [
-            "May downplay the need for emotional support",
-            "Can be too focused on the path to notice the journey"
-          ],
-          motto_chapter_themeword: "Calm Horizon",
-          narrative: "You are the steady hand on the wheel, guiding through the unknown. Your strength is in your calm and clarity, but you might miss the emotional currents. You're the one who turns a stormy sea into a peaceful voyage."
+          motto_chapter_themeword: "Question",
+          narrative: "Your questions often lead to breakthroughs. You help others see beyond their current perspective. However, be mindful that not every question needs an immediate answer, and sometimes silence is more powerful."
         }
       ];
-      let hash = 0;
-      for (const a of input.answers) {
-        for (const c of a) {
-          hash = (hash * 131 + c.charCodeAt(0)) % 1e6;
+      function hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = (hash << 5) - hash + str.charCodeAt(i);
+          hash = hash & 4294967295;
         }
+        return Math.abs(hash) % archetypeList.length;
       }
-      const index = hash % archetypes.length;
-      return archetypes[index];
+      const inputString = input.answers.join("|");
+      const index = hashString(inputString);
+      return archetypeList[index];
     }
     return { runCapability: runCapability2 };
   })();
   var _rc_friend_group_ego = /* @__PURE__ */ (() => {
     function rewardCard(input) {
-      const answers = input.answers;
-      let hash = 0;
-      for (const answer of answers) {
-        for (const char of answer) {
-          hash = hash * 31 + char.charCodeAt(0) >>> 0;
-        }
-      }
-      const index = hash % 3;
-      const readings = [
+      const candidates = [
         {
           archetype_name: "The Connector",
-          one_line_essence: "Bringing people together with a smile and a story.",
-          visual_metaphor: "A spider weaving a web of laughter and shared moments.",
-          strengths: ["Creates instant comfort", "Remembers everyone's favorite snack", "Turns strangers into friends"],
-          shadow_traits: ["Can get overwhelmed by too many connections", "Sometimes avoids deep conversations to keep the peace"],
-          motto_chapter_themeword: "Together We Bloom",
-          narrative: "You're the one who always knows how to get the group to laugh at the same time, and you have a knack for remembering the little things that make each person feel seen. Your presence is the glue that holds the group together, even when the conversation gets quiet.",
-          bio_line: "I'm the friend who probably knows the best coffee shop for a group hangout, and I'm the one who always remembers to bring extra snacks for the ones who forgot. I love how I can make a room feel like home just by being there."
+          one_line_essence: "Bringing people together with ease and warmth.",
+          visual_metaphor: "A spider weaving a web of connections between friends.",
+          strengths: ["Active listener", "Creates inclusive spaces", "Facilitates group harmony"],
+          shadow_traits: ["May overcommit to others' needs", "Avoids conflict to keep the peace"],
+          motto_chapter_themeword: "Together",
+          narrative: "You're the one who always knows how to get the group to laugh together, whether it's a spontaneous game night or a quiet coffee chat. Your presence makes everyone feel seen and included, and you have a knack for turning strangers into friends.",
+          bio_line: "I'm the one who always makes sure everyone gets a chance to speak in group chats, and I'm the first to suggest a group activity when I notice someone seems lonely. My friends say I have a way of making even the quietest moments feel like a celebration.",
+          signature: ["connect", "together", "group", "gather", "network"]
         },
         {
           archetype_name: "The Jester",
-          one_line_essence: "Turning every gathering into a spontaneous adventure.",
-          visual_metaphor: "A playful spark that ignites a chain reaction of giggles.",
-          strengths: ["Makes the mundane magical", "Eases tension with a well-timed joke", "Encourages everyone to let loose"],
-          shadow_traits: ["Can be too focused on the fun to notice when someone's struggling", "Sometimes uses humor to deflect from serious topics"],
-          motto_chapter_themeword: "Laugh Until You Cry",
-          narrative: "You're the one who always has a silly story to share or a game to start, turning even a quiet Tuesday into a memory. Your energy is contagious, and you have a way of making everyone feel like they can be their most playful selves.",
-          bio_line: "I'm the friend who probably starts a spontaneous dance party in the living room, and I'm the one who always has a ridiculous meme to share. I love how I can turn a boring day into an adventure with just a few words."
+          one_line_essence: "Turning ordinary moments into shared laughter and joy.",
+          visual_metaphor: "A clown juggling laughter and light-hearted moments in a crowd.",
+          strengths: ["Brings humor to tense situations", "Makes people feel at ease", "Encourages spontaneity"],
+          shadow_traits: ["May use humor to deflect serious issues", "Can be overly playful when others need support"],
+          motto_chapter_themeword: "Joy",
+          narrative: "You're the friend who always has the perfect joke to lighten the mood, whether it's during a stressful week or a quiet dinner. Your energy is contagious, and you have a gift for turning everyday moments into something to laugh about.",
+          bio_line: "I'm the one who cracks the funniest jokes at the most unexpected times, and I'm always ready to turn a boring meeting into a mini comedy show. My friends say I have a way of making even the most mundane tasks feel like an adventure.",
+          signature: ["laugh", "fun", "joke", "play", "light"]
         },
         {
           archetype_name: "The Anchor",
-          one_line_essence: "Providing steady calm in the midst of chaos.",
-          visual_metaphor: "A lighthouse guiding the group through stormy seas.",
-          strengths: ["Stays calm under pressure", "Offers practical solutions", "Listens without judgment"],
-          shadow_traits: ["Can be too reserved to share their own feelings", "May avoid conflict to maintain harmony"],
-          motto_chapter_themeword: "Steady as She Goes",
-          narrative: "You're the one who knows exactly when to step in and help, whether it's mediating a disagreement or just being the calm voice in a loud room. Your reliability makes the group feel safe to be themselves.",
-          bio_line: "I'm the friend who probably knows the best way to handle a group conflict, and I'm the one who always has a quiet word for someone who's feeling overwhelmed. I love how I can be the steady presence that everyone turns to."
+          one_line_essence: "Providing steady support and calm in the midst of chaos.",
+          visual_metaphor: "A lighthouse guiding friends through stormy seas.",
+          strengths: ["Emotionally stable", "Good at giving practical help", "Consistent and reliable"],
+          shadow_traits: ["May be too rigid in their approach", "Struggles to express their own emotions"],
+          motto_chapter_themeword: "Steady",
+          narrative: "You're the friend who's always there to listen without judgment, offering a calm presence during tough times. Your reliability makes others feel safe to be vulnerable, and you have a quiet strength that holds the group together.",
+          bio_line: "I'm the one who always knows when to step in with a calm word during a crisis, and I'm the friend who shows up without being asked when someone is struggling. My friends say I have a way of making them feel grounded in the middle of life's storms.",
+          signature: ["steady", "reliable", "calm", "support", "grounded"]
         }
       ];
-      return readings[index];
+      const text = input.answers.join(" ").toLowerCase();
+      const words = text.split(/\W+/).filter((w) => w.length > 0);
+      const wordSet = new Set(words);
+      let bestCandidate = candidates[0];
+      let bestScore = -1;
+      for (const candidate of candidates) {
+        const score = candidate.signature.filter((word) => wordSet.has(word)).length;
+        if (score > bestScore) {
+          bestScore = score;
+          bestCandidate = candidate;
+        }
+      }
+      const { signature, ...result } = bestCandidate;
+      return result;
     }
     return { rewardCard };
   })();
   var _rc_shadow_ego = /* @__PURE__ */ (() => {
     function rewardCard(input) {
-      const readings = [
+      const library = [
         {
-          archetype_name: "The Quiet Observer",
-          one_line_essence: "You see the world without needing to be seen.",
-          visual_metaphor: "A shadow that moves with the light, never casting one of its own.",
-          strengths: ["Perceptive", "Patient", "Unobtrusive"],
-          shadow_traits: ["Secretive", "Overly cautious", "Tends to withdraw"],
-          motto_chapter_themeword: "In the quiet, the truth is heard.",
-          narrative: "You are the one who notices the small details others miss, the subtle shifts in the room. You don't need to speak to be heard; your presence is a calm that settles the chaos. You are the shadow that helps others see their own shadows, without ever stepping into the light itself.",
-          bio_line: "I am the one who watches the edges of the room, noticing the unspoken words and the subtle shifts in the air. My presence is a quiet comfort, a steady hand that doesn't need to be seen to be felt."
+          archetype_name: "The Unspoken",
+          one_line_essence: "You are the quiet strength that holds the space for others to be heard.",
+          visual_metaphor: "A deep river flowing beneath the surface of a calm lake.",
+          strengths: ["Deep listening", "Unwavering presence", "Emotional intelligence"],
+          shadow_traits: ["Holds back to avoid conflict", "Overthinks before speaking", "Feels responsible for others' emotions"],
+          motto_chapter_themeword: "Listen to the silence",
+          narrative: "You are the calm in the storm, the steady hand that guides without speaking. Your shadow is the part of you that fears being heard, that worries about saying the wrong thing, and that takes on the weight of others' feelings. But in your quiet strength, you create a safe space for others to express themselves fully.",
+          bio_line: "I am the quiet presence that holds space for you to be heard, [firstName]. I often feel the weight of others' emotions, but I know my silence is a gift that allows them to find their own voice."
         },
         {
-          archetype_name: "The Unseen Guardian",
-          one_line_essence: "You protect without being noticed, your strength in the background.",
-          visual_metaphor: "A wall that stands firm, yet is never seen as a barrier.",
-          strengths: ["Loyal", "Resilient", "Selfless"],
-          shadow_traits: ["Overprotective", "Takes on too much", "Fears being replaced"],
-          motto_chapter_themeword: "Strength in the unseen.",
-          narrative: "You are the shield that others don't know they have. You stand behind the scenes, ensuring safety and stability without seeking credit. Your strength is in your ability to be there without being noticed, a constant presence that makes the world feel secure.",
-          bio_line: "I am the steady hand that holds the door open for others without being noticed, the quiet strength that ensures the path is clear. My purpose is to protect, to be the foundation that others lean on without ever knowing they do."
+          archetype_name: "The Quiet One",
+          one_line_essence: "Your voice is soft, but your presence is a powerful anchor in the chaos.",
+          visual_metaphor: "A sturdy oak tree standing tall in a gentle breeze.",
+          strengths: ["Steadfastness", "Patience", "Groundedness"],
+          shadow_traits: ["Avoids confrontation", "Takes on too much responsibility", "Struggles to set boundaries"],
+          motto_chapter_themeword: "Stand firm in your calm",
+          narrative: "You are the steady anchor in the midst of life's storms. Your shadow is the part of you that takes on too much, that avoids conflict at all costs, and that feels responsible for keeping everyone else safe. But your quiet strength is a gift that helps others feel secure and grounded.",
+          bio_line: "I am the steady presence that others lean on in times of uncertainty, [firstName]. I often take on more than I can handle to keep the peace, but I am learning to set boundaries without losing my calm."
         },
         {
-          archetype_name: "The Hidden Catalyst",
-          one_line_essence: "You spark change without being the center of attention.",
-          visual_metaphor: "A spark that ignites a fire, then fades into the night.",
-          strengths: ["Innovative", "Inspiring", "Subtle"],
-          shadow_traits: ["Impatient for change", "Takes risks without warning", "Fears being overlooked"],
-          motto_chapter_themeword: "The spark that lights the way.",
-          narrative: "You are the quiet force that moves things forward. You don't need to be the one to speak; your ideas and actions create ripples that lead to transformation. You are the catalyst that sets the stage for others to shine, then steps back into the shadows.",
-          bio_line: "I am the spark that ignites the fire, the quiet idea that changes the course of events. I don't seek the spotlight, but I know that my presence can shift the entire landscape without a single word."
+          archetype_name: "The Hidden Current",
+          one_line_essence: "You move with a gentle but unstoppable force, guiding others without them realizing it.",
+          visual_metaphor: "A gentle stream carving a path through stone over time.",
+          strengths: ["Subtle influence", "Resilience", "Adaptability"],
+          shadow_traits: ["Fears being overlooked", "Takes on hidden burdens", "Struggles to assert needs"],
+          motto_chapter_themeword: "Flow with purpose",
+          narrative: "You are the gentle force that shapes the world around you without drawing attention. Your shadow is the part of you that fears being overlooked, that takes on hidden burdens, and that struggles to assert your own needs. But your quiet influence is a powerful force that helps others move forward without them even noticing.",
+          bio_line: "I am the gentle force that guides others without them realizing it, [firstName]. I often take on hidden burdens to keep things moving, but I am learning to let my own needs be seen."
         }
       ];
-      let hash = 0;
-      for (const answer of input.answers) {
-        for (const char of answer) {
-          hash = hash * 31 + char.charCodeAt(0) >>> 0;
+      function computeHash(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          hash = (hash * 131 + str.charCodeAt(i)) % 1e6;
         }
+        return hash;
       }
-      const index = hash % 3;
-      return readings[index];
+      const key = input.answers.join("|||");
+      const index = computeHash(key) % library.length;
+      const card = library[index];
+      const bioLine = card.bio_line.replace(/\[firstName\]/g, input.firstName);
+      return {
+        archetype_name: card.archetype_name,
+        one_line_essence: card.one_line_essence,
+        visual_metaphor: card.visual_metaphor,
+        strengths: [...card.strengths],
+        shadow_traits: [...card.shadow_traits],
+        motto_chapter_themeword: card.motto_chapter_themeword,
+        narrative: card.narrative,
+        bio_line: bioLine
+      };
     }
     return { rewardCard };
   })();
@@ -270,44 +294,46 @@
     function bioLine(input) {
       const templates = [
         {
-          text: "I build software that solves real problems for businesses and startups. I love collaborating with teams to create impactful products that change the world.",
-          keywords: ["build", "software", "solve", "problems", "collaborate", "team", "impactful", "product", "change"]
+          sentences: [
+            "I build responsive web applications using modern frameworks.",
+            "I enjoy collaborating with diverse teams to solve complex problems."
+          ]
         },
         {
-          text: "I design user experiences that are intuitive and delightful for everyone. I'm passionate about making technology accessible and inclusive for all users.",
-          keywords: ["design", "user", "experience", "intuitive", "delightful", "accessible", "inclusive", "technology"]
+          sentences: [
+            "I create engaging user experiences through thoughtful design and development.",
+            "I am passionate about writing clean, maintainable code and sharing knowledge."
+          ]
         },
         {
-          text: "I write clean and efficient code that is easy to maintain and scalable. I enjoy learning new technologies and sharing knowledge with others to grow together and innovate.",
-          keywords: ["write", "clean", "efficient", "code", "maintain", "learn", "technology", "share", "knowledge"]
+          sentences: [
+            "I develop scalable backend systems that power high-traffic applications.",
+            "I love mentoring junior developers and fostering a culture of continuous learning."
+          ]
         }
       ];
-      const allWords = /* @__PURE__ */ new Set();
-      for (const answer of input.answers) {
-        const words = answer.toLowerCase().split(/\s+/);
-        for (const word of words) {
-          const cleanWord = word.replace(/[^a-z0-9]/g, "");
-          if (cleanWord) {
-            allWords.add(cleanWord);
-          }
-        }
-      }
-      let bestIndex = 0;
-      let bestScore = -1;
-      for (let i = 0; i < templates.length; i++) {
-        const template = templates[i];
+      function scoreTemplate(template, answers) {
         let score = 0;
-        for (const keyword of template.keywords) {
-          if (allWords.has(keyword)) {
-            score++;
+        for (const answer of answers) {
+          for (const sentence of template.sentences) {
+            if (sentence.includes(answer)) {
+              score++;
+              break;
+            }
           }
         }
-        if (score > bestScore) {
-          bestScore = score;
-          bestIndex = i;
+        return score;
+      }
+      let maxScore = -1;
+      let selected = templates[0];
+      for (const template of templates) {
+        const score = scoreTemplate(template, input.answers);
+        if (score > maxScore) {
+          maxScore = score;
+          selected = template;
         }
       }
-      return templates[bestIndex].text;
+      return selected.sentences[0] + " " + selected.sentences[1];
     }
     return { bioLine };
   })();
@@ -324,11 +350,11 @@
   // client.js
   var CONFIG = {
     "questions": [
-      "What's a vivid metaphor for your current energy?",
-      "What strength are you using right now?",
-      "What shadow are you noticing in yourself?",
-      "What word describes your ideal self?",
-      "What phrase do you say to yourself most often?"
+      "What animal or object feels like your true self?",
+      "What do you do without even thinking about it?",
+      "What's a habit you'd like to let go of?",
+      "What would a stranger say about your energy?",
+      "What name would fit your true self?"
     ],
     "askName": true,
     "hasCard": true,
@@ -386,6 +412,31 @@
     return el;
   };
   var sp = (n) => "var(--aios-space-" + n + ", " + n * 0.25 + "rem)";
+  var SESSION = function() {
+    try {
+      var k = "aios_sid";
+      var s = sessionStorage.getItem(k);
+      if (!s) {
+        s = crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2) + Date.now().toString(36);
+        sessionStorage.setItem(k, s);
+      }
+      return s;
+    } catch (e) {
+      return "anon";
+    }
+  }();
+  function track(event, meta) {
+    try {
+      fetch("event", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ session_id: SESSION, event, meta: meta || {} }),
+        keepalive: true
+      }).catch(function() {
+      });
+    } catch (e) {
+    }
+  }
   function fieldLabel(name) {
     return String(name).replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   }
@@ -427,11 +478,13 @@
       if (answers.some((a) => !a)) {
         return;
       }
+      track("start", {});
       const firstName = form._name ? (form._name.value || "").trim() : "";
       btn.disabled = true;
       btn.textContent = "Reading...";
       try {
         const reading = await runCapability({ answers, firstName, businessName: firstName });
+        track("complete", {});
         renderResult(reading, { answers, firstName });
       } catch (err) {
         const r2 = root();
@@ -588,9 +641,11 @@
   function renderMarketLink() {
     if (!CONFIG.marketLink || !CONFIG.marketLink.url) return null;
     const wrap = $("div", { class: "aios-market-wrap" });
-    wrap.appendChild($("a", { class: "aios-market-link", href: CONFIG.marketLink.url, target: "_blank", rel: "noreferrer" }, [
+    const a = $("a", { class: "aios-market-link", href: CONFIG.marketLink.url, target: "_blank", rel: "noreferrer" }, [
       (CONFIG.marketLink.label || "More from MacLean Market") + " \u2192"
-    ]));
+    ]);
+    a.addEventListener("click", () => track("market_link", { url: CONFIG.marketLink.url }));
+    wrap.appendChild(a);
     return wrap;
   }
   function perCardBio(reading, opts) {
@@ -632,10 +687,13 @@
       } catch (e) {
         note.textContent = "Copy this: " + cap;
       }
+      track("share", { how: "copy" });
     });
     const parts = shareParts(reading, cardHeadline(reading));
     const xLink = $("a", { class: "aios-incard-intent", "data-aios-share-x": "1", href: xIntentUrl(parts.text, parts.url), target: "_blank", rel: "noreferrer" }, ["Share to X"]);
     const liLink = $("a", { class: "aios-incard-intent", "data-aios-share-linkedin": "1", href: linkedInIntentUrl(parts.url || parts.text), target: "_blank", rel: "noreferrer" }, ["Share to LinkedIn"]);
+    xLink.addEventListener("click", () => track("share", { how: "x" }));
+    liLink.addEventListener("click", () => track("share", { how: "linkedin" }));
     const intents = $("div", { class: "aios-incard-intents" });
     intents.appendChild(xLink);
     intents.appendChild(liLink);
@@ -644,6 +702,7 @@
       nativeBtn.addEventListener("click", async () => {
         const cap = shareCaption(reading, cardHeadline(reading));
         const r = await doShare(cap);
+        track("share", { how: "native", outcome: r });
         note.textContent = r === "shared" ? "Shared!" : r === "copied" ? "Copied - paste it into your post." : r === "cancelled" ? "" : cap;
       });
       intents.appendChild(nativeBtn);
@@ -776,6 +835,8 @@
           body: JSON.stringify({ email: addr, first_name: ctx && ctx.firstName || "", archetype, tags })
         });
         if (!res.ok) throw new Error("capture failed");
+        track("capture", {});
+        track("reveal", { cards: (CONFIG.rewardCards || []).length });
         const box = wrap.parentNode;
         wrap.remove();
         const mlEl = box.querySelector(".aios-market-wrap");
@@ -816,6 +877,7 @@
     const r = root();
     if (!r) return;
     injectResponsiveReset();
+    track("page_view", { questions: (CONFIG.questions || []).length });
     renderQuestions();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
